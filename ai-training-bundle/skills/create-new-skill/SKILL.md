@@ -83,9 +83,11 @@ ${BASEDIR}/skills/${SKILL_NAME}/
 
 Proactively ask questions about edge cases, input/output formats, example files, documentation for tools, success criteria, and dependencies, things to avoid.
 
-Check available tools and MCPs and determine if useful for the current skill. Research by searching docs, finding similar skills, looking up best practices, in parallel via subagents if available, otherwise inline. Come prepared with context to reduce burden on the user. Consult relevent library or API documentation.
+Check available tools and MCPs and determine if useful for the current skill. Research by searching docs, finding similar skills, looking up best practices, in parallel via sub-agents if available, otherwise inline. Delegate this to simple quick models if available. Consult relevant library or API documentation.
 
-Delegate this to simple quick models if available.
+You **MUST** present your research to the user and validate your findings with them. This is your second chance to make the skill fit for purpose. Come prepared with context to reduce burden on the user. 
+
+Iterate with the user until they are satisfied that the skill
 
 Summarise your research into one or more markdown files in the `references/` subdirectory.
 
@@ -133,6 +135,10 @@ Command-style procedural skills may be only invoked by specific commands, and th
 
 Suggest phrases and iterate with the user until you have about 5 positive and 2 negative triggers for an average procedural skill. Fewer but more general triggers for a capability.
 
+**The problem:** Agents tends to _under-trigger_ skills — it sees the description but decides not to invoke the skill. Vague or passive descriptions make this worse. The fix is to write descriptions that are assertive about when to trigger.
+
+**Why this matters:** The description is the primary signal an agent uses to decide whether to load and apply a skill. A weak description means the skill sits unused even when it would help.
+
 **Good example:**
 ```yaml
 description: 'Test local web applications using Playwright. Use when asked to verify frontend functionality, debug UI behavior, capture browser screenshots, or view browser console logs. Supports Chrome, Firefox, and WebKit.'
@@ -162,9 +168,58 @@ allowed-tools: Bash(npm *) Grep Glob
 allowed-tools: Read Edit Bash(git *)
 ```
 
+Common tool combinations by use case:
+
+**Read-only analysis:**
+
+```yaml
+allowed-tools: Read, Grep, Glob
+```
+
+**File editing:**
+
+```yaml
+allowed-tools: Read, Edit, Write, Glob
+```
+
+**Development workflow:**
+
+```yaml
+allowed-tools: Read, Edit, Write, Bash, Grep, Glob
+```
+
+**Restricted execution:**
+
+```yaml
+allowed-tools: Read, Bash
+```
+
+**All tools (default if omitted):**
+
+```yaml
+# No allowed-tools field = all tools available
+```
+
+#### Available Tools
+
+- `Read` - Read file contents
+- `Write` - Create new files
+- `Edit` - Modify existing files
+- `Bash` - Execute shell commands
+- `Grep` - Search file contents
+- `Glob` - Find files by pattern
+- `Task` - Launch sub-agents
+- `WebFetch` - Fetch web content
+- `WebSearch` - Search the web
+- `AskUserQuestion` - Prompt user for input
+- `TodoWrite` - Manage task lists
+- `NotebookEdit` - Edit Jupyter notebooks
+- `Skill` - Invoke other skills
+- `SlashCommand` - Execute slash commands
+
 ### Step 5: Write the Skill Body
 
-After the frontmatter, add markdown instructions. Recommended sections for all skill types:
+After the front-matter, add markdown instructions. Recommended sections for all skill types:
 
 | Section | Purpose |
 |---------|---------|
@@ -200,14 +255,16 @@ Particular sections may be less relevant for certain types of skill.
 - an alternative is to use a checklist of objectives or tasks if order is not important
 - workflow steps will contain links to scripts in the workflow step or steps in which they are useful
 - workflow steps may contain advice on when to delegate to a sub-agent.
+- work better when they explain _why_ a guideline exists, not just _what_ to do. agents respond better to reasoning than bare imperatives.
+- "MUST/NEVER/ALWAYS" language is useful for hard safety constraints, and mandatory checkpoints, but use sparingly, reasoning produces more adaptive behaviour.
 
 #### Guidance section
 - for capability skills the majority of content we be in here for learning by example.
 - may contain code snippets as examples for code generation tasks, and might link out to templates.
 - answers the question what does good look like?
-- may also include examples of bad practice
+- may also include examples of bad practice to help the agent know what not to do.
 - may include things to avoid and the reason (e.g. "- **NEVER** mix grain with grape, it will give you a horrible hangover.")
-
+- steer away from using imperative language in this section.
 #### Validation section
 - this will vary depending on the nature of the skill
 - for procedural skills that have a structured output this may involve checks to make sure the outputs are syntactically correct. e.g. testing that should be undertaken, use of linting and formatting tools, schema validation in the case of structured outputs, check-boxes for more complex or unstructured outputs.
@@ -278,12 +335,25 @@ This goes without saying, but skills must not contain malware, exploit code, or 
 
 ### Writing Patterns
 
-Prefer using the imperative form in instructions.
 
-Skills are usable by a range of AI agent frameworks which potentially are running on any number of large language models.
+Instructions in SKILL.md work better when they explain _why_ a guideline exists, not just _what_ to do. LLMs respond better to reasoning than bare imperatives. Try to explain to the agent why things are important in lieu of heavy-handed musty "MUST"s. Use theory of mind and try to make the skill general and not super-narrow to specific examples. 
 
-Try to explain to the agent why things are important in lieu of heavy-handed musty "MUST"s. Use theory of mind and try to make the skill general and not super-narrow to specific examples. Start by writing a draft and then look at it with fresh eyes and improve it.
+**Imperative (less effective):**
 
+```
+NEVER skip validation. ALWAYS check file exists first.
+```
+
+**Reasoning-based (more effective):**
+
+```
+Check that the file exists before processing it — this prevents confusing
+error messages that obscure the real problem (missing input vs. bad code).
+```
+
+Bare "MUST/NEVER/ALWAYS" language is useful for hard safety constraints and workflow checkpoints in procedural skills, but for capability style skills and guidance, reasoning produces more adaptive behaviour.
+
+Skills are usable by a range of AI agent frameworks which potentially are running on any number of large language models. Skills targeted at simpler models may need more didactic instructions.
 ### Quick Start: Duplicate This Template
 
 1. Use the [skill template](/templates/skill-template.md) file
@@ -302,6 +372,8 @@ Try to explain to the agent why things are important in lieu of heavy-handed mus
 - [ ] `description` is 10-1024 characters
 - [ ] `description` explains WHAT and WHEN
 - [ ] `description` is wrapped in single quotes
+- [ ] `description` is assertive — uses "Use this skill when..." with specific trigger conditions
+- [ ] `description` includes concrete trigger phrases (not just capabilities)
 - [ ] Body content is under 500 lines
 - [ ] Bundled assets are under 5MB each
 - [ ] Bundled scripts are standalone

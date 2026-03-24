@@ -80,8 +80,7 @@ if (is.null(opt$output)) {
 writeLines(
   c(
     "=============================================",
-    sprintf("Package: %s", opt$package),
-    "=============================================",
+    sprintf("Package: %s", opt$package)
   ),
   conn
 )

@@ -29,7 +29,9 @@ Do NOT use this skill for:
 
 ## Available Scripts
 
+- [`scripts/list_documentation.R`](scripts/list_documentation.R): Lists the vignettes, and manual pages available for a given package.
 - [`scripts/extract_documentation.R`](scripts/extract_documentation.R): Extracts full documentation for a locally installed R package (DESCRIPTION, vignettes, function reference) as plain text. Used in Step 3 of the workflow.
+- [`scripts/pick_documentation.R`](scripts/pick_documentation.R): Extracts a single vignette or manual page by name for a locally installed R package as plain text. Used in Step 3 of the workflow.
 
   ```bash
   Rscript scripts/extract_documentation.R --package <package_name> [--output <file>]
@@ -75,29 +77,36 @@ ${SKILL_BASEDIR}/skills/${SKILL_NAME}/
 └── SKILL.md          # created in Step 7
 ```
 
-### Step 3: Extract R package documentation
 
-For each package in `PACKAGES`, run the extraction script to capture its full documentation.
-Your skill base directory is provided in your context — use it to locate the script.
-
-```bash
-Rscript <skill_base_dir>/scripts/extract_documentation.R \
-  --package <package_name> \
-  --output /tmp/<package_name>_docs.txt
-```
-
-Write each output to a temporary file. The raw output may be large — do not load it all into
-context at once. Read vignettes first (they explain intent), then function entries only for
-functions that appear in the example files.
-
-### Step 4: Scan the project for analysis examples
+### Step 3: Scan the project for analysis examples
 
 Use glob/grep to find analysis files in `PROJECT_DIR`:
 - Look for `*.R`, `*.Rmd`, `*.qmd` files
 - Focus on analysis scripts; skip package source (`R/` directories) and test files (`tests/`)
 - Read the most representative examples — prioritise files that use multiple key packages
 - Focus on parts that align with the user's area of interest for this skill
+### Step 4: Extract R package documentation
 
+- Either: for each package in `PACKAGES`, run the extraction script to capture its full documentation: [`scripts/list_documentation.R`](scripts/list_documentation.R): This may produce a large output so most output it to a temporary file and analyse from there, with a focus on vignettes.
+ 
+```bash
+Rscript <skill_base_dir>/scripts/extract_documentation.R \
+  --package <package_name> \
+  --output /tmp/<package_name>_docs.txt
+```
+
+- Or: if you know what functions are relevant from the packages load them directly with [`scripts/list_documentation.R`](scripts/list_documentation.R) and [`scripts/pick_documentation.R`](scripts/pick_documentation.R)
+
+```bash
+Rscript <skill_base_dir>/scripts/list_documentation.R \
+  --package <package_name>
+  
+Rscript <skill_base_dir>/scripts/pick_documentation.R \
+  --package <package_name>
+  --vignette <vignett_name>
+```
+
+Your skill base directory is provided in your context — use it to locate the script.
 ### Step 5: Analyse patterns and goals
 
 Read the example files alongside the extracted package docs. Identify:
@@ -166,12 +175,11 @@ Fix any validation errors before presenting the result to the user.
 
 Before declaring the skill complete, verify:
 
-- [ ] All specified R packages were successfully documented (check for Rscript errors in Step 3)
+- [ ] All specified R packages were successfully summarised in references
 - [ ] At least one example R/Rmd file was found and read
 - [ ] Output `SKILL.md` passes `agentskills validate`
 - [ ] Reference files are under 300 lines each and contain real code snippets from the examples
-- [ ] The `description` field explains WHAT the analysis does and WHEN to trigger (10-1024 chars,
-  wrapped in single quotes)
+- [ ] The `description` field explains WHAT the analysis does and WHEN to trigger (10-1024 chars, wrapped in single quotes)
 - [ ] Guidance section contains annotated, real code examples — not invented or generic snippets
 
 ## Troubleshooting
@@ -189,7 +197,8 @@ Before declaring the skill complete, verify:
 
 - [`scripts/extract_documentation.R`](scripts/extract_documentation.R) — R package documentation
   extractor (run this in Step 3)
+- [`scripts/list_documentation.R`](scripts/list_documentation.R) and [scripts/pick_documentation.R]
 - [`eval/scripts/test_extract_documentation.sh`](eval/scripts/test_extract_documentation.sh) —
   Test script for the extractor; run after changes to the extractor script
-- `create-new-skill` skill — Canonical guidance on SKILL.md structure, description best
+- `create-new-skill` skill — Canonical guidance on `SKILL.md` structure, description best
   practices, and skill types

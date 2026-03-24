@@ -68,3 +68,6 @@ A simpler structure to the SKILL.md file is needed we suggest:
 | `## Error handling` | What to do when it goes wrong |
 
 
+### Steps
+
+Instructions in SKILL.md work better when they explain _why_ a guideline exists, not just _what_ to do. (reasoning-based, versus imperative. For commands however a more imperative style may be appropriate. Bare "MUST/NEVER/ALWAYS" language is useful for hard safety constraints, and mandatory checkpoints, but for workflow guidance, reasoning produces more adaptive behaviour.
