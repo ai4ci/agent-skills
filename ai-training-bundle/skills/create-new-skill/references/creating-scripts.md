@@ -3,31 +3,82 @@
 You think its a good idea to encapsulate a deterministic action, that needs no user input which
 is being created as part of a skill as a script.
 
-Done correctly this will lead to reliability and reproducability of the skill.
-
-There might be many scripts like this called by a single skills workflow.
+Done correctly this will lead to reliability and reproducability of the skill. Done inappropriately will cause inflexibility, maintainance headaches and fragility.
 
 ## Before you start
 
 - Is there an easy way to do this using a single bash command? or a single `uvx` python, `bunx` javascript, or `Rscript -e "..."` command?
-- Is there anthing non-deterministic about this action?
-- Could this ever need user input?
 - Is there an inbuilt tool or available MCP server that meets this need?
 
-If **yes** to any of the above then go back and think whether this is really a good idea.
+If **yes** embed that command / tool / MCP in your workflow.
+
+- Is there anything non-deterministic about this action?
+- Could this ever need user input?
+- Does this action involve choices that could reasonably vary between uses? (e.g., which packages to install, which config options to include)
+- Would a future user (or you) likely want to customize the internals without editing the script?
+- Is the script encoding domain knowledge that would be clearer as documented guidance?
+- Are you parameterizing things that would be better explained as "here are your options, pick what fits"?
+
+If **yes** to any of the above, use a **reference guide** instead of a script.
+
+Reference guides:
+- Let the agent make context-appropriate decisions during the workflow
+- Are easier to extend without breaking existing functionality
+- Make the reasoning visible rather than hidden in script logic
+- Can be updated by editing prose rather than debugging code
+
+## Script vs Reference Guide
+
+Not everything that *could* be automated *should* be a script. Consider these patterns:
+
+### Use a script when:
+- The action is truly deterministic given inputs (e.g., "create a VM with these exact specs")
+- There's one right way to do it
+- The complexity is in execution, not in deciding what to execute
+- Failure modes are technical (network, permissions), not conceptual
+
+### Use a reference guide when:
+- The action involves selecting from options (e.g., "which dev environments to install")
+- Domain knowledge is needed to make good choices
+- The "right" configuration depends on context you can't parameterize
+- You find yourself adding many flags to handle variations
+- Future users will want to understand *why*, not just *what*
+
+### Warning signs you've scripted something that should be a guide:
+- Script has many optional flags that interact in complex ways
+- Script embeds opinionated defaults that users will want to change
+- You're documenting "edit the script to customize X"
+- The script is mostly string templating with conditionals
+- Testing requires many different flag combinations
+
+### Example transformation:
+
+**Before (script with too many options):**
+```bash
+./setup-dev-env.sh --python --nodejs --r --java --python-version 3.12 --use-conda ...
+```
+
+**After (reference guide + minimal script):**
+- references/python-dev.md - Guide with options, trade-offs, snippets to copy
+- references/nodejs-dev.md - Same pattern
+- scripts/launch-vm.sh - Simple script that takes assembled config as input
+
+### The middle way:
+
+**DO NOT** write 300 lines of arcane bash script with lots of configuration options
+**DO** choose a script enabled workflow, with multiple 10-30 line (excluding boilerplate) scripts performing the heavy lifting and file IO, and an interactive reference guide or workflow orchestrating them. Prefer many small scripts called by a single skills workflow.
+
+If a script is more than 100 lines of bash it is probably doing something too complex, and maybe should be broken down into multiple scripts and workflow steps in the skill.
+
+**IF IN DOUBT DISCUSS WITH THE USER.**
 
 ## Requirements for a script
 
-Remember that you (or a model like you) are the primary user of this script, and that it will be called
-in the context of the skill workflow. Be clear about what the purpose of the script is, and keep
-it tightly scoped, but you do not need to implement every edge case. You can assume the user (you) will
-retry on failure if they are given enough information.
+Remember that you (or a model like you) are the primary user of this script, and that it will be called in the context of the skill workflow. Be clear about what the purpose of the script is, and keep it tightly scoped, but you do not need to implement every edge case. You can assume the user (you) will retry on failure if they are given enough information.
 
-### Self contained scripts
+### Self contained script boilerplate
 
-Example script templates, that use a path to a config file as an example, the `--config` option is
-just for example and may not be needed in your case. These examples are standalone, automatically
-include dependencies, output to file or console, and give meaningful results from a `--help` option
+Here are example script templates, that use a path to a config file as an example, the `--config` option is just for example and may not be needed in your case. These examples are standalone, automatically include dependencies, output to file or console, and give meaningful results from a `--help` option. Extend these for the majority of uses.
 
 #### R scripts
 
@@ -267,8 +318,6 @@ main();
 - output to `stdout` or file.
 - document the script with purpose, expected inputs and outputs with a `--help` option.
 - for destructive or stateful operations, a `--dry-run` flag lets the agent preview what will happen.
-
-### Good practice:
 - write a seperate test script in an `eval/scripts/` subdirectory of the skill, and reference the process for executing the test within the script comments
 - the test script must not leave any trace of itself after running
 - run the test script whenever changing the main script
@@ -304,4 +353,4 @@ run_script() {
 }
 ```
 
-If a script is more than 100 lines of bash it is probably doing something too complex, and maybe should be broken down into multiple scripts and workflow steps in the skill.
+

@@ -104,7 +104,7 @@ Every skill requires YAML frontmatter with `name` and `description`:
 ```yaml
 ---
 name: <skill-name>
-description: '<What it does>. Use when <specific triggers, scenarios, keywords users might say>.'
+description: 'Use when <specific triggers, scenarios, keywords users might say>.'
 ---
 ```
 
@@ -113,7 +113,7 @@ description: '<What it does>. Use when <specific triggers, scenarios, keywords u
 | Field | Required | Constraints |
 |-------|----------|-------------|
 | `name` | **Yes** | 1-64 chars, lowercase letters/numbers/hyphens only, must match folder name |
-| `description` | **Yes** | 1-1024 chars, must describe WHAT it does AND WHEN to use it |
+| `description` | **Yes** | 1-1024 chars, must describe WHEN to use it but not what it does |
 | `license` | No | License name or reference to bundled LICENSE.txt |
 | `compatibility` | No | 1-500 chars, environment requirements if needed |
 | `allowed-tools` | No | Space-delimited list of pre-approved tools |
@@ -125,9 +125,8 @@ if you are working on a command style procedural skill also consult the [command
 
 **CRITICAL**: The `description` is the PRIMARY mechanism for automatic skill discovery. Include:
 
-1. **WHAT** the skill does (capabilities)
-2. **WHEN** to use it (triggers, scenarios, file types)
-3. **Keywords** users might mention in prompts
+1. **WHEN** to use it (triggers, scenarios, file types)
+2. **Keywords** users might mention in prompts
 
 An under-specified description means the skill won’t trigger when it should; an over-broad description means it triggers when it shouldn’t. When should this skill trigger? (what user phrases/contexts) When should it not trigger? Procedural skills may have very specific triggers, capability skills will likely be more general.
 
@@ -141,7 +140,7 @@ Suggest phrases and iterate with the user until you have about 5 positive and 2 
 
 **Good example:**
 ```yaml
-description: 'Test local web applications using Playwright. Use when asked to verify frontend functionality, debug UI behavior, capture browser screenshots, or view browser console logs. Supports Chrome, Firefox, and WebKit.'
+description: 'Use when asked to verify frontend functionality, debug UI behavior, capture browser screenshots, or view browser console logs. Supports Chrome, Firefox, and WebKit.'
 ```
 
 **Poor example:**
@@ -151,7 +150,7 @@ description: 'Web testing helpers'
 
 **Good example:**
 ```yaml
-description: 'Stakeholder context for Test Project when discussing product features, UX research, or stakeholder interviews. Auto-invoke when user mentions Test Project, product lead, or UX research. Do NOT load for general stakeholder discussions unrelated to Test Project'
+description: 'Use when user mentions Test Project, product lead, or UX research. Do NOT load for general stakeholder discussions unrelated to Test Project'
 ```
 
 **Poor example:**
@@ -224,7 +223,7 @@ After the front-matter, add markdown instructions. Recommended sections for all 
 | Section | Purpose |
 |---------|---------|
 | `# <Title>` | Meaningful title name followed by a brief overview |
-| `## When to Use This Skill` | Reinforces description triggers |
+| `## When to Use this skill` | Reinforces description triggers |
 | `## Available scripts` | List available scripts so the agent knows they exist |
 | `## Prerequisites` | Required inputs, tools, dependencies, installation instructions |
 | `## Workflow` | Numbered steps for tasks |
@@ -237,6 +236,21 @@ Particular sections may be less relevant for certain types of skill.
 - a procedural skill: "Guidance" may be less relevant than "Workflow"
 - a capability skill: "Workflow" may be less relevant than "Guidance"
 - for command style procedural skills see the [command-skill guidance](references/command-skills.md).
+
+#### When to Use this skill section
+- Use concrete triggers, symptoms, and situations that signal this skill applies
+- Describe the problem (race conditions, inconsistent behavior) not language-specific symptoms (setTimeout, sleep)
+- Keep triggers technology-agnostic unless the skill itself is technology-specific
+- If skill is technology-specific, make that explicit in the trigger
+
+NEVER summarize the skill's process or workflow
+
+Use words agents would search for:
+
+- Error messages: "Hook timed out", "ENOTEMPTY", "race condition"
+- Symptoms: "flaky", "hanging", "zombie", "pollution"
+- Synonyms: "timeout/hang/freeze", "cleanup/teardown/afterEach"
+- Tools: Actual commands, library names, file types
 
 #### Available scripts section
 - if a procedural skill is performing deterministic actions, and these cannot be done very simply in one command using `bash`, `uvx`, `bunx` or `Rscript -e "..."`, or they need any form of complex invocation, implement them as a script: consult [creating scripts](/references/creating-scripts.md).
@@ -265,6 +279,7 @@ Particular sections may be less relevant for certain types of skill.
 - may also include examples of bad practice to help the agent know what not to do.
 - may include things to avoid and the reason (e.g. "- **NEVER** mix grain with grape, it will give you a horrible hangover.")
 - steer away from using imperative language in this section.
+
 #### Validation section
 - this will vary depending on the nature of the skill
 - for procedural skills that have a structured output this may involve checks to make sure the outputs are syntactically correct. e.g. testing that should be undertaken, use of linting and formatting tools, schema validation in the case of structured outputs, check-boxes for more complex or unstructured outputs.
@@ -335,7 +350,6 @@ This goes without saying, but skills must not contain malware, exploit code, or 
 
 ### Writing Patterns
 
-
 Instructions in SKILL.md work better when they explain _why_ a guideline exists, not just _what_ to do. LLMs respond better to reasoning than bare imperatives. Try to explain to the agent why things are important in lieu of heavy-handed musty "MUST"s. Use theory of mind and try to make the skill general and not super-narrow to specific examples. 
 
 **Imperative (less effective):**
@@ -354,6 +368,7 @@ error messages that obscure the real problem (missing input vs. bad code).
 Bare "MUST/NEVER/ALWAYS" language is useful for hard safety constraints and workflow checkpoints in procedural skills, but for capability style skills and guidance, reasoning produces more adaptive behaviour.
 
 Skills are usable by a range of AI agent frameworks which potentially are running on any number of large language models. Skills targeted at simpler models may need more didactic instructions.
+
 ### Quick Start: Duplicate This Template
 
 1. Use the [skill template](/templates/skill-template.md) file
@@ -370,10 +385,10 @@ Skills are usable by a range of AI agent frameworks which potentially are runnin
 - [ ] Folder name is lowercase with hyphens
 - [ ] `name` field matches folder name exactly
 - [ ] `description` is 10-1024 characters
-- [ ] `description` explains WHAT and WHEN
+- [ ] `description` explains WHEN to use (but not WHAT it does)
 - [ ] `description` is wrapped in single quotes
 - [ ] `description` is assertive — uses "Use this skill when..." with specific trigger conditions
-- [ ] `description` includes concrete trigger phrases (not just capabilities)
+- [ ] `description` includes concrete trigger phrases, situations or symptoms
 - [ ] Body content is under 500 lines
 - [ ] Bundled assets are under 5MB each
 - [ ] Bundled scripts are standalone

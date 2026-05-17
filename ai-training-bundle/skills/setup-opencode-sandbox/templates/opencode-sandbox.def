@@ -1,0 +1,76 @@
+# Singularity Definition File Skeleton
+#
+# This is a minimal skeleton. Customize by adding sections from:
+#   - references/singularity-guide.md (structure, build methods)
+#   - references/*-dev.md (development environment snippets)
+#
+# Build with:
+#   sudo singularity build mycontainer.sif mycontainer.def
+#   singularity build --fakeroot mycontainer.sif mycontainer.def
+
+Bootstrap: docker
+From: ubuntu:24.04
+
+%labels
+    Author your-name
+    Version 1.0
+    Description OpenCode sandbox environment
+
+%post
+    # Base packages
+    apt-get update && apt-get install -y \
+        git \
+        curl \
+        wget \
+        build-essential \
+        ca-certificates \
+        jq \
+        unzip
+    
+    # ============================================
+    # ADD DEVELOPMENT ENVIRONMENTS HERE
+    # See references/*-dev.md for snippets
+    # ============================================
+    
+    # Example: Python (uv)
+    # curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/usr/local/bin sh
+    
+    # Example: Node.js (bun)
+    # curl -fsSL https://bun.sh/install | BUN_INSTALL=/usr/local bash
+    
+    # ============================================
+    
+    # Install opencode
+    curl -fsSL https://opencode.ai/install | sh
+    cp /root/.local/bin/opencode /usr/local/bin/ 2>/dev/null || true
+    
+    # Workspace directory
+    mkdir -p /workspace
+    
+    # Cleanup
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%environment
+    export PATH=/usr/local/bin:$PATH
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export HOME=/root
+
+%runscript
+    cd "${WORKSPACE:-/workspace}"
+    exec opencode "$@"
+
+%help
+    OpenCode Sandbox Container
+    
+    Usage:
+      singularity run --bind /path/to/project:/workspace container.sif
+      singularity shell --bind /path/to/project:/workspace container.sif
+    
+    With opencode config:
+      singularity run \
+        --bind /path/to/project:/workspace \
+        --bind ~/.config/opencode:/root/.config/opencode:ro \
+        --bind ~/.local/share/opencode:/root/.local/share/opencode \
+        container.sif
