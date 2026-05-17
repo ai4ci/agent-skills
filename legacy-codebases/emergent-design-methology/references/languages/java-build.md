@@ -5,7 +5,7 @@ mvnd (Maven Daemon): If relevant use `mvnd` instead of `mvn`. It keeps a backgro
 ---
 ## Validation tools (Java):
 
-### 
+### Syntax & Formatting Validation
 - `Spotless` with `Palantir Java Format` can be invoked from the CLI or build tools to clean up text format logic.
 - `Checkstyle` - Mature, highly customisable syntax linter. Unlike code formatters, it explicitly checks semantic layout, structural indentation, and enforces strict variable naming conventions.
 - [SpotBugs](https://spotbugs.github.io/) (`spotbugs -textui -xml -output spotbugs.xml build/classes`): The modern successor to FindBugs. It runs at bytecode level to flag deep structural issues (like null pointer risks or unclosed streams) and outputs deterministic XML summaries.
@@ -32,15 +32,14 @@ mvnd (Maven Daemon): If relevant use `mvnd` instead of `mvn`. It keeps a backgro
 
 
 ---
-## Project Setup (Java):
+## Project Setup (Java) with `em` - maven example
 
-Here is the complete summary of all dependencies and configuration files required to enable strict Java compilation linting, synchronized Javadoc validation, Spotless formatting, and Markdown documentation generation using Maven or Gradle.
-### 1. Dependency Installation
+Use the project-local `em` script as the only public build entry point. `em` should delegate to the Java build tool already used by the repository. Do not invent a second workflow in `package.json`, ad-hoc shell scripts, or CI.
 
 Java builds embed plugins directly inside the main workspace configuration tree rather than requiring global system node layers.
 #### For Maven projects (`pom.xml` configurations):
 
-Add the central tool chains to your `<plugins>` array:
+Add the central tool chains to your `<plugins>` array, the choice here of plugin configuration depends on whether the developer has a `eclipse-formatter.xml` specified in the project:
 
 ```xml
 <plugins>
@@ -83,34 +82,20 @@ Add the central tool chains to your `<plugins>` array:
 </plugins>
 ```
 
-#### For Gradle projects (`build.gradle` configurations):
+### `em` command mapping
 
-```groovy
-plugins {
-    id 'java'
-    id 'com.diffplug.spotless' version '6.25.0'
-    id 'checkstyle'
-}
+| `em` command | Maven                                                                             | Gradle                                               | Notes                                                                                                       |
+| ------------ | --------------------------------------------------------------------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `em run`     | `exec:java` or `spring-boot:run` if already configured                            | `run` if the application plugin exists               | Delegate to the existing project entrypoint. If the project only produces a jar, build it and run that jar. |
+| `em test`    | `test`                                                                            | `test`                                               | Run the full automated test suite.                                                                          |
+| `em check`   | `spotless:check checkstyle:check spotbugs:check pmd:cpd-check dependency:analyze` | `spotlessCheck checkstyleMain spotbugsMain cpdCheck` | Only call tasks that are actually configured in the project.                                                |
+| `em doc`     | `javadoc:javadoc`                                                                 | `javadoc`                                            | Write warnings and errors to `.agents/em/docs-output`.                                                      |
 
-spotless {
-    java {
-        googleJavaFormat('1.22.0').aosp()
-    }
-}
+### Minimal project configuration
 
-checkstyle {
-    toolVersion = '10.15.0'
-    configFile = file('checkstyle.xml')
-}
-```
-
----
-
-### 2. Configuration Files
+For Maven projects, add plugins such as Spotless, Checkstyle, SpotBugs, JaCoCo, and Javadoc to `pom.xml`. For Gradle projects, apply the equivalent plugins in `build.gradle` or `build.gradle.kts`. `em` should remain a thin wrapper. The build logic belongs in the native Java build file.
 
 #### `checkstyle.xml`
-
-This file configures Checkstyle to parses code methods and throws severe compilation errors if a developer alters a parameter but forgets to update the matching `@param` block inside the Javadoc.
 
 ```xml
 <?xml version="1.0"?>
@@ -130,12 +115,9 @@ This file configures Checkstyle to parses code methods and throws severe compila
 </module>
 ```
 
-## `spotless.eclipseformat.ignore`
-
-A single source of truth configuration to bypass files from Spotless validation routines (acts exactly like `.prettierignore`). Place it in the root folder.
+#### `spotless.eclipseformat.ignore`
 
 ```text
-# Ignore build artifact zones
 target/
 build/
 .gradle/
@@ -143,43 +125,29 @@ bin/
 docs/
 ```
 
----
+### Example `em` implementation (`mvnd`)
 
-## 3. Running the Ecosystem Commands
+```bash
+cmd_test() {
+  ensure_em_dir
+  mvnd test 2>&1 | tee "$TEST_LOG"
+}
 
-- `mvn checkstyle:check` — Validates Java Javadoc syntax and enforces naming schemes.
-- `mvn spotless:apply` — Instantly reformats Java files to the strict format baseline.
-- `mvn spotless:check --file`  — Scans files for structural format compliance.
-- `mvn spotbugs:spotbugs`  — Scans files for common errors.
-- `mvn javadoc:javadoc` — Compiles complete Javadoc files out to your `/target/site/apidocs` repository.
+cmd_check() {
+  ensure_em_dir
+  mvnd spotless:check checkstyle:check spotbugs:check 2>&1 | tee "$CHECK_LOG"
+}
 
----
-
-## Git Workflow Integration (Java expansion)
-
-Update your root `lefthook.yml` file to dynamically target and process Java source code modifications right next to your existing TypeScript procedures:
-
-```yaml
-pre-commit:
-  commands:
-    # Task 1: Check and fix code formatting
-    format-java:
-      glob: "*.java"
-      run: mvn spotless:apply && git add {staged_files}
-
-    # Task 2: Validate code logic and check documentation sync
-    lint-java:
-      glob: "*.java"
-      run: mvn checkstyle:check
+cmd_doc() {
+  ensure_em_dir
+  mvnd javadoc:javadoc >"$DOC_LOG" 2>&1
+}
 ```
 
----
+`cmd_run` is intentionally project-specific. Set it once for the repository and keep it stable, for example `./gradlew run`, `mvn spring-boot:run`, or `java -jar target/app.jar`.
+
+### CI and hooks
+
+CI and local hooks should call `./em check` and `./em test`. They should not duplicate Maven or Gradle commands directly. That keeps local, agent, and CI behaviour aligned.
 
 
-## Automated Upgrade & Migration
-
-- OpenRewrite CLI (`rewrite run`): A highly capable tool for large-scale automated refactoring. If your agent needs to upgrade legacy code (e.g., updating Java 8 syntax to modern Java 21 features or migrating structural APIs), OpenRewrite applies recipes programmatically via the command line.
-
-## 5. 
-
----

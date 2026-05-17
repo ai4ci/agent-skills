@@ -25,13 +25,13 @@ This is the preferred set of tools to support agentic R code generation.
 
 ---
 
-## Project Setup (R):
+## Project Setup (R) with `em`
 
-Here is the complete summary of all configuration files and environment scripts required to enable strict R linting, unified formatting rules, and automated validation.
+Use the project-local `em` script to standardise how an R project is run, tested, checked, and documented. Keep tool configuration in the native R files. Keep orchestration in `em`.
 
 ### 1. Dependency Installation
 
-R environments use the native package manager to track system extensions, while utilizing `uv` for Rust-backed tools:
+R environments use the native package manager to track packages, while tools such as Air and Jarl provide fast CLI checks:
 
 ```bash
 # Install core verification and testing tools inside R
@@ -86,61 +86,46 @@ line_length_linter: null
 object_usage_linter: ~
 ```
 
-#### `.prettierignore` / Global Exclusions
-
-Maintain your global file block targets to filter out build artifacts:
-
-```text
-renv/
-.git/
-data/
-scratch/
-*.csv
-*.xml
-```
-
 ---
 
-### 3. Integrated Scripts (`package.json` proxy layer)
+### 3. `em` command mapping
 
-Route standard script paths into a `package.json` manifest to provide your automated agents with a uniform execution pattern:
+| `em` command | R command                                                                                              | Notes                                                                   |
+| ------------ | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
+| `em run`     | `Rscript scripts/run.R` or `Rscript -e "source('main.R')"`                                             | Pick one project entrypoint and keep it documented in `em`.             |
+| `em test`    | `Rscript -e "testthat::test_dir('tests/testthat')"`                                                    | Prefer a deterministic script or package test entrypoint.               |
+| `em check`   | `air format --check . && jarl check . && Rscript -e "quit(status = length(lintr::lint_dir('.')) > 0)"` | Add `renv::status()` when the project uses `renv.lock`.                 |
+| `em doc`     | `Rscript -e "devtools::document()"`                                                                    | For package projects, this should update `.Rd` output and log warnings. |
 
-```json
-"scripts": {
-  "lint": "Rscript -e \"write.csv(as.data.frame(lintr::lint_dir(path = '.')), 'lint-errors.csv', row.names = FALSE)\"",
-  "format": "air format .",
-  "format:check": "air format --check .",
-  "docs:generate": "Rscript -e \"devtools::document()\""
+### 4. Example `em` command bodies
+
+```bash
+cmd_run() {
+  ensure_em_dir
+  Rscript scripts/run.R >"$RUN_LOG" 2>&1
+}
+
+cmd_test() {
+  ensure_em_dir
+  Rscript -e "testthat::test_dir('tests/testthat')" 2>&1 | tee "$TEST_LOG"
+}
+
+cmd_check() {
+  ensure_em_dir
+  {
+    air format --check .
+    jarl check .
+    Rscript -e "quit(status = length(lintr::lint_dir('.')) > 0)"
+    [ ! -f renv.lock ] || Rscript -e "quit(status = renv::status()$synchronized == FALSE)"
+  } 2>&1 | tee "$CHECK_LOG"
+}
+
+cmd_doc() {
+  ensure_em_dir
+  Rscript -e "devtools::document()" >"$DOC_LOG" 2>&1
 }
 ```
 
+### 5. Hooks and CI
 
----
-### 4. Running the Ecosystem Commands
-
-- `bun run lint` — Runs deep semantic linting and exports issues to a flat CSV file.
-- `bun run format` — Instantly applies formatting modifications matching your `air.toml` file.
-- `bun run format:check` — Throws an error code if formatting conventions are violated.
-- `bun run docs:generate` — Compiles inline comment properties into `.Rd` references.
-
----
-
-## Git Workflow Integration (R expansion)
-
-Incorporate R's validation tools into your root `lefthook.yml` file to handle your data analysis files seamlessly alongside your other languages:
-
-```yaml
-pre-commit:
-  commands:
-    # Task 1: Check and fix R code formatting layout via Air
-    format-r:
-      glob: "*.R"
-      run: uvx --from air-formatter air format {staged_files} && git add {staged_files}
-
-    # Task 2: Validate code logic and compile structural JUnit reports
-    lint-r:
-      glob: "*.R"
-      run: Rscript -e "if(any(nrow(lintr::lint_dir())) > 0) stop('Lint failures found.')"
-```
-
----
+Use `./em check` and `./em test` in CI. Hooks may still format staged files directly with `air`, but the full project contract should remain the `em` interface.

@@ -63,63 +63,59 @@ python     = "ruff check --stdin-filename=cell.py -"
 
 ---
 
-## Project Setup (Polyglot Markdown):
+## Project Setup (Polyglot Markdown) with `em`
+
+Use `panache` as the formatter and linter router for mixed-language Markdown files, but expose the workflow through `em`.
 
 ## 1. Dependency Installation
 
-Install Panache along with the target formatting binaries using your local project tools:
-
 ```bash
-# Install the Rust-powered orchestrator and R formatter via uv
 uv tool install panache
 uv tool install air-formatter
 
-# Install web and shell syntax formatting utilities via bun
 bun add --dev prettier sql-formatter
-
-# Ensure system paths have native binaries available
-# e.g., ruff, shfmt, sleek, or jarl
 ```
+
+Ensure the underlying language tools are also installed and available on `PATH`, for example `ruff`, `shfmt`, `jarl`, and `sqlfluff` or `sleek`.
 
 ---
 
-## 2. Integrated Scripts (`package.json` proxy layer)
+## 2. `em` command mapping
 
-Map your multi-language checking routines into your core `package.json` setup to supply your automation scripts with a uniform validation workflow:
+| `em` command | Polyglot command | Notes |
+| --- | --- | --- |
+| `em run` | `quarto render`, `Rscript -e "rmarkdown::render(...)"`, or the repository render command | Use the repository's main render entrypoint. |
+| `em test` | Notebook smoke tests or downstream language-specific tests | Pick one documented command and keep it stable. |
+| `em check` | `panache lint . && panache format --check .` | This is the primary quality gate for mixed-language docs. |
+| `em doc` | `quarto render` or site/book generation | If the main artefact is the documentation, `em run` and `em doc` may intentionally share the same renderer. |
 
-```json
-"scripts": {
-  "lint": "panache lint .",
-  "format": "panache format .",
-  "format:check": "panache format --check ."
+## 3. Example `em` command bodies
+
+```bash
+cmd_run() {
+  ensure_em_dir
+  quarto render >"$RUN_LOG" 2>&1
+}
+
+cmd_test() {
+  ensure_em_dir
+  quarto render --to html 2>&1 | tee "$TEST_LOG"
+}
+
+cmd_check() {
+  ensure_em_dir
+  {
+    panache lint .
+    panache format --check .
+  } 2>&1 | tee "$CHECK_LOG"
+}
+
+cmd_doc() {
+  ensure_em_dir
+  quarto render >"$DOC_LOG" 2>&1
 }
 ```
 
----
+## 4. Hooks and CI
 
-## 3. Running the Ecosystem Commands
-
-- `bun run lint` — Sequentially executes language-specific diagnostics (like `jarl` and `ruff`) across all embedded code cells in parallel, tracking down unused variables or circular hooks.
-- `bun run format` — Extracts individual code fences into temporary memory layers, formats them using your custom configuration tools, and swaps the valid code back into the parent Markdown file.
-- `bun run format:check` — Scans `.qmd` and `.Rmd` workspaces, returning a non-zero exit code if either text blocks or raw code cells violate structure guidelines. [4, 5, 8]
-
----
-
-## Git Workflow Integration (Polyglot expansion)
-
-Incorporate polyglot routing validation blocks directly into your project's `lefthook.yml` file to handle your raw analytical workbooks securely beside your source codebase:
-
-```yaml
-pre-commit:
-  commands:
-    # Task 1: Check and auto-correct multi-language code fences via Panache
-    format-polyglot:
-      glob: "*.{qmd,Rmd,md}"
-      run: panache format {staged_files} && git add {staged_files}
-
-    # Task 2: Lint text structures and run structural cell validations
-    lint-polyglot:
-      glob: "*.{qmd,Rmd,md}"
-      run: panache lint {staged_files}
-```
-
+Hooks may format staged `.qmd`, `.Rmd`, or `.md` files directly with `panache format`. CI should call `./em check` and the repository's chosen `./em run` or `./em test` workflow.

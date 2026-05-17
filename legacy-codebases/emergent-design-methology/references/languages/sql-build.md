@@ -43,13 +43,13 @@ Here is your SQL validation framework, refactored to align with the exact layout
 
 ---
 
-## Project Setup (SQL):
+## Project Setup (SQL) with `em`
 
-Here is the complete summary of the environment installation instructions and standard configurations required to manage multi-dialect SQL validation pipelines.
+Use `em` to standardise schema workflows. For SQL projects, `em run` must operate against a disposable local or development database. It must never default to production.
 
 ## 1. Dependency Installation
 
-Install your core SQL linting, formatting, and schema validation utilities using Python's `uv` and Node's `bun` package infrastructure:
+Install the core SQL linting, formatting, and schema validation utilities used by the repository:
 
 ```bash
 # Install Python-backed linting infrastructure via uv
@@ -108,45 +108,44 @@ env "dev" {
 
 ---
 
-## 3. Integrated Scripts (`package.json` proxy layer)
+## 3. `em` command mapping
 
-Map standard multi-dialect checking routines into your core `package.json` configurations to supply your orchestration agents with a uniform execution wrapper:
+| `em` command | SQL command | Notes |
+| --- | --- | --- |
+| `em run` | `atlas schema apply --env dev` or the repository migration command | Only target disposable or development infrastructure. |
+| `em test` | `pg_prove`, `sqldef`, or migration smoke tests | Pick the test runner used by the repository. |
+| `em check` | `sqlfluff lint --dialect postgres . && squawk .` | Match the real dialect in `.sqlfluff`. |
+| `em doc` | `atlas schema inspect --env dev` | Save warnings and errors to `.agents/em/docs-output`. |
 
-```json
-"scripts": {
-  "lint": "sqlfluff lint --dialect postgres --format json . > sql-lint-report.json",
-  "format": "sqlfluff fix --dialect postgres --force .",
-  "format:check": "sql-formatter -l postgres -c .prettierignore --check",
-  "docs:generate": "atlas schema inspect --env dev > schema.md"
+## 4. Example `em` command bodies
+
+```bash
+cmd_run() {
+  ensure_em_dir
+  atlas schema apply --env dev --auto-approve >"$RUN_LOG" 2>&1
+}
+
+cmd_test() {
+  ensure_em_dir
+  pg_prove tests 2>&1 | tee "$TEST_LOG"
+}
+
+cmd_check() {
+  ensure_em_dir
+  {
+    sqlfluff lint --dialect postgres .
+    squawk .
+  } 2>&1 | tee "$CHECK_LOG"
+}
+
+cmd_doc() {
+  ensure_em_dir
+  atlas schema inspect --env dev >"$DOC_LOG" 2>&1
 }
 ```
 
----
+If the repository uses a different database engine or migration tool, keep the same `em` surface and swap the internal commands.
 
-## 4. Running the Ecosystem Commands
+## 5. Hooks and CI
 
-- `bun run lint` — Runs deep multi-file dialect audits and logs code structure errors into a JSON output.
-- `bun run format` — Automatically refactors all database files, fixing capitalization issues and structural indents.
-- `bun run format:check` — Scans SQL queries and returns a non-zero exit status if layout patterns are violated.
-- `bun run docs:generate` — Headlessly inspects schema code matrices to export a unified markdown description.
-
----
-
-## Git Workflow Integration (SQL expansion)
-
-Incorporate multi-dialect SQL rules into your primary `lefthook.yml` validation sequence to stop broken schemas or high-risk queries from landing in your version history:
-
-```yaml
-pre-commit:
-  commands:
-    # Task 1: Check and auto-correct SQL structural formatting syntax via SQLFluff
-    format-sql:
-      glob: "*.sql"
-      run: sqlfluff fix --dialect postgres --force {staged_files} && git add {staged_files}
-
-    # Task 2: Validate queries against dialect profiles and run Squawk safety evaluations
-    lint-sql:
-      glob: "*.sql"
-      run: sqlfluff lint --dialect postgres {staged_files} && squawk {staged_files}
-```
-
+Hooks may run `sqlfluff fix` on staged files, but the project-level validation contract should stay `./em check` and `./em test`.

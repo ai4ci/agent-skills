@@ -22,20 +22,20 @@ This is the preferred set of tools to support agentic typescript code generation
 - see [[typescript-profiling]].
 
 ---
-## Project Setup:
+## Project Setup with `em`
 
-Here is the complete summary of all dependencies and configuration files required to enable strict TypeScript linting, synchronized documentation validation, Prettier formatting, and Markdown documentation generation using `bun` or `npm`.
+Use `em` as the stable build interface and let it delegate to the repository's existing package manager. If the project already uses `npm`, keep using `npm`. For a greenfield TypeScript project, prefer `bun`.
 ### 1. Dependency Installation
 
-Install all necessary dev dependencies for your linting, formatting, and documentation ecosystem:
+Install the normal TypeScript tooling in the project and call it from `em`:
 
 ```bash
 bun add --dev eslint @eslint/js typescript typescript-eslint eslint-config-prettier eslint-plugin-jsdoc prettier typedoc typedoc-plugin-markdown
 ```
 
-OR 
+Or for npm-based projects:
 
-```
+```bash
 npm install --save-dev eslint @eslint/js typescript typescript-eslint eslint-config-prettier eslint-plugin-jsdoc prettier typedoc typedoc-plugin-markdown
 ```
 
@@ -133,16 +133,19 @@ docs/
 tests/
 ```
 
-### 3. Integrated bun / npm Scripts (`package.json`)
+### 3. `package.json` scripts
 
-Add these commands to the `"scripts"` field in your `package.json` to make running tasks direct and streamlined (and stop `knip` removing references by name). Prettier requires a double dash (--) before the file path when invoked through package scripts
+Keep the detailed commands in `package.json`. `em` should call these scripts rather than duplicating flags in multiple places. Prettier requires a double dash (`--`) before the file path when invoked through package scripts.
 
 ```json
 "scripts": {
   "lint": "eslint",
   "format": "prettier --write -- ",
   "format:check": "prettier --check --",
-  "docs:generate": "typedoc"
+  "docs:generate": "typedoc",
+  "test": "vitest run",
+  "typecheck": "tsc --noEmit",
+  "start": "node dist/index.js"
 },
 "knip": {
   "ignoreDependencies": [
@@ -151,51 +154,68 @@ Add these commands to the `"scripts"` field in your `package.json` to make runni
 }
 ```
 
-### 4. Running the Ecosystem Commands
+### 4. `em` command mapping
 
-- `bun run lint <file or directory>` — Validates TS rules and guarantees doc-block comments match functions.
-- `bun run format <file or directory>` — Automatically formats files (skipping the `docs/` folder).
-- `bun run format:check <file or directory>
-- `bun run docs:generate` — Compiles safe Markdown API pages without tripping over tests.
+| `em` command | Bun project | npm project | Notes |
+| --- | --- | --- | --- |
+| `em run` | `bun run start` | `npm run start` | Prefer an existing `start` script. If the repository uses `dev`, document that choice in `em`. |
+| `em test` | `bun test` or `bun run test` | `npm test` | Run the full automated test suite. |
+| `em check` | `bun run typecheck && bun run lint . && bunx knip` | `npm run typecheck && npm run lint -- . && npx knip` | Add `format:check` if formatting is a gate. |
+| `em doc` | `bun run docs:generate` | `npm run docs:generate` | Send warnings and errors to `.agents/em/docs-output`. |
 
-or npm equivalents
-
----
-## Git Workflow Integration
-
-### 1. Install Lefthook
-
-Add Lefthook to your project development dependencies using Bun:
+### 5. Example `em` command bodies
 
 ```bash
-bun add --dev lefthook
+pkg_exec() {
+  if [ -f bun.lockb ]; then
+    echo "bun"
+  else
+    echo "npm"
+  fi
+}
+
+cmd_test() {
+  ensure_em_dir
+  local pkg
+  pkg="$(pkg_exec)"
+  if [ "$pkg" = "bun" ]; then
+    bun test 2>&1 | tee "$TEST_LOG"
+  else
+    npm test 2>&1 | tee "$TEST_LOG"
+  fi
+}
+
+cmd_check() {
+  ensure_em_dir
+  local pkg
+  pkg="$(pkg_exec)"
+  if [ "$pkg" = "bun" ]; then
+    {
+      bun run typecheck
+      bun run lint .
+      bunx knip
+    } 2>&1 | tee "$CHECK_LOG"
+  else
+    {
+      npm run typecheck
+      npm run lint -- .
+      npx knip
+    } 2>&1 | tee "$CHECK_LOG"
+  fi
+}
+
+cmd_doc() {
+  ensure_em_dir
+  local pkg
+  pkg="$(pkg_exec)"
+  if [ "$pkg" = "bun" ]; then
+    bun run docs:generate >"$DOC_LOG" 2>&1
+  else
+    npm run docs:generate >"$DOC_LOG" 2>&1
+  fi
+}
 ```
 
-### 2. Create the Configuration File
+### 6. Hooks and CI
 
-Create a file named **`lefthook.yml`** in your project's root folder. This file instructs Git to isolate and scan _only_ the specific TypeScript files you have changed (staged) right before a commit is allowed to complete:
-
-```yaml
-pre-commit:
-  commands:
-    # Task 1: Check and fix code formatting
-    format:
-      glob: "*.ts"
-      run: bun run format {staged_files} && git add {staged_files}
-
-    # Task 2: Validate code logic and check documentation sync
-    lint:
-      glob: "*.ts"
-      run: bun run lint {staged_files}
-```
-
-### 3. Activate the Hooks
-
-Run the initialization command to write Lefthook's execution scripts into your native hidden `.git/hooks/` directory:
-
-```bash
-bunx lefthook install
-```
-
-
----
+Hooks may still format staged files directly, but project-level validation in hooks and CI should call `./em check` and `./em test`. That keeps local, agent, and CI behaviour aligned.

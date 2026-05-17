@@ -43,17 +43,17 @@ Here is your LaTeX validation framework, expanded and refactored to align with t
 
 ---
 
-## Project Setup (LaTeX):
+## Project Setup (LaTeX) with `em`
 
-Here is the complete summary of the environment installation instructions, standard configurations, and file exclusions required to manage automated LaTeX verification pipelines.
+For LaTeX projects, the primary artefact is usually documentation. `em` should still present the same build interface, but `run` should build the main deliverable and `doc` should report documentation warnings or package-doc generation issues.
 
 ## 1. Dependency Installation
 
-Install your core LaTeX tools, compiler engines, and formatter scripts natively using your system utility tools:
+Install the core LaTeX tools used by the repository:
 
 ```bash
-# On Debian/Ubuntu-based systems (Includes latexindent, chktex, and lacheck)
-sudo apt-get update && sudo apt-get install -y texlive-extra-utils chktex lacheck texlive-latex-extra
+# On Debian/Ubuntu-based systems
+sudo apt-get update && sudo apt-get install -y texlive-extra-utils chktex lacheck texlive-latex-extra latexmk
 
 # On macOS systems via Homebrew (MacTeX utility core package layer)
 brew install --cask mactex-no-gui
@@ -110,45 +110,51 @@ Ensure auxiliary compiler files, log artifacts, and intermediate font maps are s
 
 ---
 
-## 3. Integrated Scripts (`package.json` proxy layer)
+## 3. `em` command mapping
 
-Map standard LaTeX validation and compilation checks into your project's `package.json` file to supply your automated agents with a uniform execution wrapper:
+| `em` command | LaTeX command | Notes |
+| --- | --- | --- |
+| `em run` | `latexmk -pdf main.tex` | Build the primary PDF or report artefact. |
+| `em test` | `l3build check` or a draft compile smoke test | Use `l3build` for package projects. |
+| `em check` | `latexindent` check + `chktex` + `pdflatex -draftmode` | Run syntax and formatting gates without a full render when possible. |
+| `em doc` | `tex document.ins`, `latexmk`, or other package-doc build | If the main deliverable is already the documentation, log that clearly. |
 
-```json
-"scripts": {
-  "lint": "chktex -q -f '%f:%l:%c:%m\n' *.tex > latex-errors.log",
-  "format": "latexindent -w -c=. ./*.tex",
-  "format:check": "latexindent -n -c=. ./*.tex",
-  "docs:generate": "pdflatex -interaction=nonstopmode main.tex"
+## 4. Example `em` command bodies
+
+```bash
+cmd_run() {
+  ensure_em_dir
+  latexmk -pdf main.tex >"$RUN_LOG" 2>&1
+}
+
+cmd_test() {
+  ensure_em_dir
+  if [ -f build.lua ]; then
+    l3build check 2>&1 | tee "$TEST_LOG"
+  else
+    pdflatex -draftmode -interaction=nonstopmode main.tex 2>&1 | tee "$TEST_LOG"
+  fi
+}
+
+cmd_check() {
+  ensure_em_dir
+  {
+    latexindent -n -c=. ./*.tex
+    chktex ./*.tex
+    pdflatex -draftmode -interaction=nonstopmode main.tex
+  } 2>&1 | tee "$CHECK_LOG"
+}
+
+cmd_doc() {
+  ensure_em_dir
+  if [ -f document.ins ]; then
+    tex document.ins >"$DOC_LOG" 2>&1
+  else
+    echo "Primary artefact is the documentation. Use 'em run' to build it." >"$DOC_LOG"
+  fi
 }
 ```
 
----
+## 5. Hooks and CI
 
-## 4. Running the Ecosystem Commands
-
-- `bun run lint` — Conducts global ChkTeX static analysis and captures structural logic anomalies inside a clean error log.
-- `bun run format` — Instantly rewrites document files, fixing line-wrap boundaries and structural item layouts.
-- `bun run format:check` — Scans `.tex` documents and returns a non-zero exit code if layout indentation rules are broken.
-- `bun run docs:generate` — Compiles source syntax branches headlessly into clean, structured target output layouts.
-
----
-
-## Git Workflow Integration (LaTeX expansion)
-
-Incorporate LaTeX verification rules into your root `lefthook.yml` file to intercept broken text blocks or layout compilation issues right before code commits are allowed to finalize:
-
-```yaml
-pre-commit:
-  commands:
-    # Task 1: Check and fix document formatting constraints via latexindent
-    format-latex:
-      glob: "*.tex"
-      run: latexindent -w -c=. {staged_files} && git add {staged_files}
-
-    # Task 2: Dry-run check syntax boundaries and audit document blocks with ChkTeX
-    lint-latex:
-      glob: "*.tex"
-      run: pdflatex -draftmode -interaction=nonstopmode {staged_files} && chktex {staged_files}
-```
-
+Hooks may format staged `.tex` files directly. CI should call `./em check` and either `./em test` or `./em run`, depending on whether the project is a package or a document.

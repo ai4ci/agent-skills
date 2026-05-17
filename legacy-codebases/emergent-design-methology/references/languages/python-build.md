@@ -24,12 +24,11 @@ Integrating [uv](https://docs.astral.sh/uv/) and `uvx` (the ultra-fast Python pr
 
 ---
 
-## Project Setup (Python with uv):
+## Project Setup (Python with uv) using `em`
 
-This approach uses a centralized `pyproject.toml` managed completely via `uv`. 
-### 1. Initialize and Install Dependencies [4]
+Use `uv` as the Python toolchain, but expose it through the project-local `em` script. `pyproject.toml` is the source of truth for tool configuration. `em` is the source of truth for how the project is run, tested, checked, and documented.
 
-To set up a greenfield project or convert an existing directory, run the initialization command to generate your layout, then add the package structures using `uv`:
+### 1. Initialise and install dependencies
 
 ```bash
 # Initialize project structure
@@ -42,7 +41,7 @@ uv add pydantic requests
 uv add --dev ruff mypy pytest deptry coverage pydoclint mkdocs-material mkdocstrings[python]
 ```
 
-_(Note: `uv` will instantly build a tracking `.venv` and maintain a deterministic `uv.lock` file in the background)._
+`uv` creates and maintains `.venv` and `uv.lock` for you. Keep that behaviour inside the normal project workflow and do not wrap it in extra ad-hoc shell scripts.
 
 ---
 
@@ -115,32 +114,51 @@ plugins:
             show_root_heading: true
 ```
 
-### 3. Running Ecosystem Commands Natively via `uv` 
+### 3. `em` command mapping
 
-`uv run` automatically locks and matches your execution context to the internal project tree without requiring tool prefix activations: 
-
-- **Lint and check docstrings on a target file:** `uv run ruff check src/main.py && uv run pydoclint src/main.py`
-- **Format a targeted path or directory:**: `uv run ruff format src/main.py`
-- **Run an isolated strict type compliance evaluation:** `uv run mypy src/main.py`
-- **Compile inline docstrings into documentation markdown files:** `uv run mkdocs build --site-dir docs`
+| `em` command | Python command | Notes |
+| --- | --- | --- |
+| `em run` | `uv run python -m your_package` or `uv run your-console-script` | Set the project entrypoint once in `em` and keep it documented. |
+| `em test` | `uv run pytest` | Use `tee` so output goes to the terminal and `.agents/em/test-output`. |
+| `em check` | `uv run ruff check . && uv run mypy . && uv run deptry . && uvx pip-audit` | Add or remove checks to match the project. |
+| `em doc` | `uv run pydoclint . && uv run mkdocs build --strict` | Capture warnings and errors in `.agents/em/docs-output`. |
 
 ---
 
-## Git Workflow Integration (Python with uv) [9]
+### 4. Example `em` command bodies
 
-Update your root `lefthook.yml` workflow configuration file to evaluate your Python codebase natively using `uv run`:
+```bash
+cmd_run() {
+  ensure_em_dir
+  uv run python -m your_package >"$RUN_LOG" 2>&1
+}
 
-```yaml
-pre-commit:
-  commands:
-    # Task 1: Check and fix Python code formatting via ruff
-    format-python:
-      glob: "*.py"
-      run: uv run ruff format {staged_files} && git add {staged_files}
+cmd_test() {
+  ensure_em_dir
+  uv run pytest 2>&1 | tee "$TEST_LOG"
+}
 
-    # Task 2: Validate code compliance and check documentation parameters
-    lint-python:
-      glob: "*.py"
-      run: uv run ruff check {staged_files} && uv run pydoclint {staged_files} && uv run mypy {staged_files}
+cmd_check() {
+  ensure_em_dir
+  {
+    uv run ruff check .
+    uv run mypy .
+    uv run deptry .
+    uvx pip-audit
+  } 2>&1 | tee "$CHECK_LOG"
+}
+
+cmd_doc() {
+  ensure_em_dir
+  {
+    uv run pydoclint .
+    uv run mkdocs build --strict
+  } >"$DOC_LOG" 2>&1
+}
 ```
 
+Replace `your_package` with the real module or console script. Avoid per-agent variations. The entrypoint belongs in `em`.
+
+### 5. Hooks and CI
+
+CI and local hooks should invoke `./em check` and `./em test`. File-scoped hook commands are fine, but they should reuse the same toolchain and configuration already exercised by `em`.
