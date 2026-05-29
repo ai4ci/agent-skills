@@ -1,0 +1,129 @@
+#!/bin/bash
+
+
+# Exit immediately if a command exits with a non-zero status
+set -e
+
+export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:/bin/java::")
+
+# --- Configuration & Paths ---
+EM_DIR=".agents/em"
+RUN_LOG="$EM_DIR/log"
+TEST_LOG="$EM_DIR/test-output"
+DOC_LOG="$EM_DIR/docs-output"
+CHECK_LOG="$EM_DIR/check-output"
+
+# --- Helper Functions ---
+ensure_em_dir() {
+    mkdir -p "$EM_DIR"
+}
+
+show_help() {
+    echo "Usage: em <command> [options]"
+    echo ""
+    echo "Supported sub-commands:"
+    echo "  run     Builds and executes the project (logs to $RUN_LOG)"
+    echo "  test    Builds and runs all automated tests (outputs to terminal and $TEST_LOG)"
+    echo "  doc     Runs documentation tools (logs warnings/errors to $DOC_LOG)"
+    echo "  check   Runs linters and code quality checks (logs report to $CHECK_LOG)"
+    echo "  help    Show this help message"
+}
+
+# --- Sub-command Implementations ---
+
+cmd_run() {
+    echo "Starting 'run' command..."
+    ensure_em_dir
+
+    
+    echo "Executing project with default configurations..." > "$RUN_LOG"
+
+    # Example your project's build and execute logic here
+    # This really needs to expose trace logging to the console with a log4j properties file. 
+    mvnd compile exec:java -Dexec.mainClass="Greeter" -Dexec.args="$@" | grep -v "Download" | tee "$RUN_LOG"
+    
+    echo "Run complete. Output logged to $RUN_LOG"
+}
+
+cmd_test() {
+    echo "Starting 'test' command..."
+    ensure_em_dir
+
+    echo "Building and running automated tests..." | tee "$TEST_LOG"
+    
+    # Example project's test suite command here
+    # includes code coverage report
+    mvnd clean test jacoco:report | grep -v "https://repo.maven.apache.org" | tee -a "$TEST_LOG"
+    
+    echo "[STUB] Test suite execution logic goes here" | tee -a "$TEST_LOG"
+    echo "Test suite complete. Output saved to $TEST_LOG"
+}
+
+cmd_doc() {
+    echo "Starting 'doc' command..."
+    ensure_em_dir
+
+    echo "Running documentation tools..."
+    
+    # TODO: Add your project's documentation tool here
+    # Redirect stderr (warnings/errors) to the doc log, stdout to /dev/null or terminal
+    {
+        echo "[STUB] Documentation tool warnings/errors will appear below:"
+        mvnd javadoc:javadoc | grep -v "Download" >"$DOC_LOG" 2>&1
+    } > "$DOC_LOG"
+
+    echo "Documentation generation complete. Warnings/errors logged to $DOC_LOG"
+}
+
+cmd_check() {
+    echo "Starting 'check' command..."
+    ensure_em_dir
+
+    echo "Running linters and code quality checks..."
+    
+    # TODO: This also needs code coverage stats and code duplication analysis
+    {
+        echo "Code Quality Report - $(date)"
+        echo "-----------------------------------"
+        echo "[STUB] Linter tool reports go here"
+        mvnd spotless:check checkstyle:check spotbugs:check pmd:cpd-check dependency:analyze | grep -v "Download"
+    } > "$CHECK_LOG"
+
+    echo "Code quality check complete. Report written to $CHECK_LOG"
+}
+
+# --- Main Argument Parsing ---
+
+# If no arguments are passed, default to help
+if [ $# -eq 0 ]; then
+    show_help
+    exit 0
+fi
+
+# Parse the first argument as the sub-command
+COMMAND="$1"
+shift # Remove the command from the argument list, leaving sub-arguments in "$@"
+
+case "$COMMAND" in
+    run)
+        cmd_run "$@"
+        ;;
+    test)
+        cmd_test "$@"
+        ;;
+    doc)
+        cmd_doc "$@"
+        ;;
+    check)
+        cmd_check "$@"
+        ;;
+    --help|help|-h)
+        show_help
+        ;;
+    *)
+        echo "Error: Unknown command '$COMMAND'" >&2
+        echo "" >&2
+        show_help >&2
+        exit 1
+        ;;
+esac

@@ -10,65 +10,45 @@ metadata:
 
 Emergent design is a methodological framework for AI assisted software development that supports green field and legacy code. It is primarily designed to help you work with solo human developers who are used to working outside of traditional development methodologies, such as in research settings. You are helping turn their projects into maintainable and reusable code in a form that can be rapidly assimilated by new agents, can be safely extended or refactored, and which can be used in other agentic AI enabled projects.
 
-The developer:
-* Has domain expertise that you do not.
-* Understands the rationale for this project better than you.
-* Knows about historical design choices and why they were made.
-* Probably has a mental map of a legacy codebase.
-* Is under more time pressure than you, and more likely to cut corners.
+---
+## When to use this skill
 
-Your advantages:
-* Have more knowledge of modern design principles and alternative frameworks.
-* Are better at unexciting repetitive tasks.
-* Have better discipline to follow methodologies.
-* Are better at pattern recognition and code summarization, quick analysis of undocumented systems.
-
-Your disadvantages
-* May not understand the full context of the codebase yet.
-* Have a tendency to focus on specifics and potential to quickly generate technical debt.
-
-Collaboration model
-* Will be most successful working on isolated bugs or cleanly scoped tasks.
-- You will require multiple attempts to achieve multi-file legacy fixes and will benefit from human-in-the-loop iteration.
-- Your success rates will be higher when the task includes upfront test coverage, CI integration, and you have clear understanding of the task.
+* The user specifies or you have a memory that this project is to use "emergent design".
+* "Migrate this project to emergent design", implies this is a legacy project.
+* "Setup this project for emergent design", maybe a legacy or green-field project.
+* "Work on a new feature" when the project is using emergent design principles, suggests a mature project. 
+* "Check my changes" when in an emergent design project suggests, either a legacy or mature project
 
 ---
 ## Fundamental principles
 
-* The primary goal is to improve code maintainability and quality, and to make it possible for other agents and humans to understand the project.
-* Automated tests are essential to success.
-* Code quality metrics must be put in place.
-* A secondary goal is to help address issues.
-* A distant tertiary goal is to add new features.
+These instructions are based around 3 different scenarios. The first task is to decide which is most relevant:
 
-Your priorities
-* Map out the code, update design and end user documentation, including test scripts
-* Retrofit automated testing, quality checks and continuous integration
-* Retrospectively prototype legacy features to help discover issues, and create test data.
-* Develop test support services to make implementing testing easy.
+* **Mature:** You are working on a project that already conforms to emergent design principles and is passing all code and design quality checks.
+* **Green Field:** You are working on a new software project with no pre-existing design or code.
+* **Legacy:** You are working on a existing software project that has not been using an emergent design, or is being adapted to emergent design, but does not pass all code and design quality checks.
 
-You are striving for
-* 20% of code is developer focused comments describing intent and control flow with clear provenance (e.g. `// AI: at this point XYZ is ...`)
-* Diagnostic trace logging enthusiastically embraced in new and legacy code.
-* Code quality is improving by measuring and acting on code coverage, linting, etc.
-* Design documentation that mirrors production code and is updated after every change.
-* User documentation that mirrors current features and is updated after every change.
-* Version information available through the code (e.g. a `--version` option).
+A mature emergent design project has the following characteristics:
 
-Working style
-* When implementing features or fixing issues with production code you must follow the [[editing-production-code]] guidance
-* 
+* A fully maintained design documentation folder with features, test-scripts, prototypes reflecting the scope of the project.
+* A production codebase that is automatically tested with very high code coverage, with the results stored in `.agents/em`.
+* Production code passes a full code quality check including formatting, linting, code duplication checks, with the results stored in `.agents/em`.
+* Exposes a language independent consistent mechanism to test the production code (the `em` script).
+* Contains tools to help navigate the code.
+* Contains skills that help AI agents use the code.
 
-New features
-- Validate requirements for new features with the developer before implementing
-* Keep it simple - simpler code is easier to maintain. 
-* YAGNI - fewer options = more useable code and simpler control flow.
-* Prospectively prototype new features
-* No new production code without automated tests
+**Practical tip:** Inspect the `.agents/em` folder contents to see the results of tests and code and design quality checks to decide if this is a mature emergent design project, or a legacy project that is being migrated. 
 
----
+In all cases your goal is for the project to be completely documented, design and prototype driven production code, with full automated tests, and high quality defect free, minimally duplicated code, automatically monitored with metrics, with supporting AI skills.
 
----
+Based on the type of project follow the relevant guide:
+* [working with legacy code](./references/legacy-code.md)
+* [set up green field project](references/green-field)
+* [extending a mature project](./references/mature-project.md)
+
+Discuss with the user if it is not clear which guide to follow.
+
+
 ## Mapping out legacy code
 
 ---
@@ -116,7 +96,27 @@ When editing code:
 
 
 
+The developer:
+* Has domain expertise that you do not.
+* Understands the rationale for this project better than you.
+* Knows about historical design choices and why they were made.
+* Probably has a mental map of a legacy codebase.
+* Is under more time pressure than you, and more likely to cut corners.
 
+Your advantages:
+* Have more knowledge of modern design principles and alternative frameworks.
+* Are better at unexciting repetitive tasks.
+* Have better discipline to follow methodologies.
+* Are better at pattern recognition and code summarization, quick analysis of undocumented systems.
+
+Your disadvantages
+* May not understand the full context of the codebase yet.
+* Have a tendency to focus on specifics and potential to quickly generate technical debt.
+
+Collaboration model
+* Will be most successful working on isolated bugs or cleanly scoped tasks.
+- You will require multiple attempts to achieve multi-file legacy fixes and will benefit from human-in-the-loop iteration.
+- Your success rates will be higher when the task includes upfront test coverage, CI integration, and you have clear understanding of the task.
 
 
 ---
@@ -125,24 +125,6 @@ When editing code:
 
 ---
 
-### Advanced Debugging with Logging
-
-When debugging:
-* Don't implement fixes without **clear evidence** for cause.
-* Replicate issue and code up a failing test case.
-* Add logging for this issue / function for the input and outputs
-* Run function, review the logs and fix the issue.
-
-By using logging, you can see exactly what's happening inside the function, which variables have unexpected values, and where things are breaking.
-### Revert Reimplement loop
-
-- After you have fixed a complex issue, ask yourself what the issue was and how it was fixed
-- Ask: "If we had this issue again, what would we need to prompt to fix it?"
-- Document this approach in the issue.
-- Go back to a previous restore point or commit (right as the bug occurred)
-- Say: "Looking at the code, please follow this approach and fix the problem..."
-
-This uses future knowledge to prevent spaghetti code that results from just prompting through an issue without understanding it.
 
 ---
 ### Creating AI-Friendly Reference Points
@@ -167,18 +149,9 @@ Avoid using AI to “bolt on” major new functionality to fragile legacy system
 
 ### 2) 
 
-### 3) Use AI for Exploratory Tasks
+### 3) 
 
-- Summarize confusing methods
-- Map out outdated class hierarchies
-- Draft migration plans
 
-### refactoring:
-- moving code to where it most logically belongs
-- removing duplicate code
-- making names self-documenting
-- splitting monolithic methods into smaller pieces
-- re-arranging inheritance hierarchies
 
 ### 4 Create Guardrails with Human Review
 

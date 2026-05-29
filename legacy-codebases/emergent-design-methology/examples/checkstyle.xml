@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.3//EN" "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
+<module name="Checker">
+    <property name="severity" value="error"/>
+    <module name="TreeWalker">
+        <!-- Strictly checks Javadoc against live methods -->
+        <module name="JavadocMethod">
+            <property name="accessModifiers" value="public, protected, package, private"/>
+            <property name="validateThrows" value="true"/>
+        </module>
+        <!-- Ensures all parameters match names exactly -->
+        <module name="MissingDeprecated"/>
+        <module name="NonEmptyAtclauseDescription"/>
+    </module>
+</module>

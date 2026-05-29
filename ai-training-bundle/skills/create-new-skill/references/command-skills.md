@@ -3,9 +3,9 @@
 These are implemented in different ways in different AI platforms.
 
 Only use them if all the following are true of a skill:
-- Short and task focussed skill
+- Short and task focused skill
 - Triggered explicitly by the user or by an orchestrating agent
-- Purpose of the skill is to perform a specific set of actions determinstically
+- Purpose of the skill is to perform a specific set of actions deterministically
 - Completely self contained and do not need to call out to scripts or use other resources
 - Can be executed with minimal user input
 
@@ -45,8 +45,8 @@ The most future proof looks to be to create a symbolic link in the commands dire
 | `description` | Yes | 1-1024 chars, must describe WHAT it does AND WHEN to use it |
 | `license` | No | License name or reference to bundled LICENSE.txt |
 | `model` | No | Model to use when this command is activated. |
-| `agent` | No | Which subagent type to use. |
-| `context` | No | Claude specific: Set to "fork" to run in a forked subagent context. |
+| `agent` | No | Which sub-agent type to use. |
+| `context` | No | Claude specific: Set to "fork" to run in a forked sub-agent context. |
 | `disable-model-invocation` | No | Claude specific: Set to true to prevent Claude from automatically loading this skill. Use for
 | `subtask` | No | OpenCode specific: boolean option to suggest opencode uses a different agent |
 | `return` | No | OpenCode with Subtask2 specific: tell the main agent what to do after a command completes |

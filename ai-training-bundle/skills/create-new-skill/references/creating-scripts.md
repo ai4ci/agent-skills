@@ -3,7 +3,7 @@
 You think its a good idea to encapsulate a deterministic action, that needs no user input which
 is being created as part of a skill as a script.
 
-Done correctly this will lead to reliability and reproducability of the skill. Done inappropriately will cause inflexibility, maintainance headaches and fragility.
+Done correctly this will lead to reliability and reproducibility of the skill. Done inappropriately will cause inflexibility, maintenance headaches and fragility.
 
 ## Before you start
 
@@ -17,7 +17,7 @@ If **yes** embed that command / tool / MCP in your workflow.
 - Does this action involve choices that could reasonably vary between uses? (e.g., which packages to install, which config options to include)
 - Would a future user (or you) likely want to customize the internals without editing the script?
 - Is the script encoding domain knowledge that would be clearer as documented guidance?
-- Are you parameterizing things that would be better explained as "here are your options, pick what fits"?
+- Are you parametrizing things that would be better explained as "here are your options, pick what fits"?
 
 If **yes** to any of the above, use a **reference guide** instead of a script.
 
@@ -40,7 +40,7 @@ Not everything that *could* be automated *should* be a script. Consider these pa
 ### Use a reference guide when:
 - The action involves selecting from options (e.g., "which dev environments to install")
 - Domain knowledge is needed to make good choices
-- The "right" configuration depends on context you can't parameterize
+- The "right" configuration depends on context you can't parametrize
 - You find yourself adding many flags to handle variations
 - Future users will want to understand *why*, not just *what*
 
@@ -241,7 +241,8 @@ if __name__ == "__main__":
 ```
 
 #### bun javascript scripts
-```
+
+```ts
 #!/usr/bin/env bun
 import { OptionParser } from "option-parser";
 import yaml from "js-yaml";
@@ -256,7 +257,7 @@ async function main() {
   parser.addOption("o", "output", "an output file (defaults to stdout)", "output")
         .setOptional();
 
-  # Example parameter
+  // Example parameter
   parser.addOption("c", "config", "path to a YAML configuration file", "config")
         .setOptional(); // We check for null manually to mirror your R logic
 
@@ -312,19 +313,21 @@ main();
 ```
 
 ### Essential criteria:
+
 - keep it simple, and I mean simple.
 - regard this script as a single stateless function.
 - expect simple inputs and fail fast on invalid input.
 - output to `stdout` or file.
 - document the script with purpose, expected inputs and outputs with a `--help` option.
 - for destructive or stateful operations, a `--dry-run` flag lets the agent preview what will happen.
-- write a seperate test script in an `eval/scripts/` subdirectory of the skill, and reference the process for executing the test within the script comments
+- write a separate test script in an `eval/scripts/` sub-directory of the skill, and reference the process for executing the test within the script comments
 - the test script must not leave any trace of itself after running
 - run the test script whenever changing the main script
 - if the script needs private information then source them from environment variables and document them in the skill prerequisites, failing fast if not available.
 
 ### Things to avoid:
-- **NEVER** embed secrets or API tokens in a script. Assume script will be shared widely as part of the skill, and be publically available on github.
+
+- **NEVER** embed secrets or API tokens in a script. Assume script will be shared widely as part of the skill, and be publicly available on github.
 - do not embed complex decision logic or multiple workflow steps in a script, do that in the skill itself.
 - do not use complex dependencies that require installation.
 - do not exhaustively catch all possible edge cases.
@@ -334,7 +337,7 @@ main();
 
 Pick the best tool for the job but prefer bash, then javascript (via `bun`), then R (via `Rscript`) or python (via `uv`). Document script running dependencies (`uv`, `bun` in the skill prerequisites section, any bash dependencies like `jq`).
 
-Put test data if needed in the `eval/scripts/` subdirectory of the skill.
+Put test data if needed in the `eval/scripts/` sub-directory of the skill.
 
 Ensure that the tests are running the main script from the root of the skill so for example:
 

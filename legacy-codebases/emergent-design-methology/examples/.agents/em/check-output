@@ -1,0 +1,43 @@
+Code Quality Report - Tue 19 May 16:54:06 BST 2026
+-----------------------------------
+[STUB] Linter tool reports go here
+[INFO] Processing build on daemon b71cc185
+[INFO] Scanning for projects...
+[INFO] BuildTimeEventSpy is registered.
+[INFO] 
+[INFO] Using the SmartBuilder implementation with a thread count of 15
+[INFO] 
+[INFO] --------------< io.github.ai4ci:emergent-design-example >---------------
+[INFO] Building emergent-design-example 0.3.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- spotless:2.43.0:check (default-cli) @ emergent-design-example ---
+[INFO] Spotless.Java is keeping 2 files clean - 0 needs changes to be clean, 0 were already clean, 2 were skipped because caching determined they were already clean
+[INFO] 
+[INFO] --- checkstyle:3.3.1:check (default-cli) @ emergent-design-example ---
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Starting audit...
+Audit done.
+[INFO] You have 0 Checkstyle violations.
+[INFO] 
+[INFO] >>> spotbugs:4.9.8.0:check (default-cli) > :spotbugs @ emergent-design-example >>>
+[INFO] 
+[INFO] --- spotbugs:4.9.8.0:spotbugs (spotbugs) @ emergent-design-example ---
+[INFO] Fork Value is true
+[INFO] Done SpotBugs Analysis....
+[INFO] Skipping com.github.spotbugs:spotbugs-maven-plugin:4.9.8.0:spotbugs report goal
+[INFO] 
+[INFO] <<< spotbugs:4.9.8.0:check (default-cli) < :spotbugs @ emergent-design-example <<<
+[INFO] 
+[INFO] 
+[INFO] --- spotbugs:4.9.8.0:check (default-cli) @ emergent-design-example ---
+[INFO] BugInstance size is 0
+[INFO] Error size is 0
+[INFO] No errors/warnings found
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  2.062 s (Wall Clock)
+[INFO] Finished at: 2026-05-19T16:54:08+01:00
+[INFO] ------------------------------------------------------------------------

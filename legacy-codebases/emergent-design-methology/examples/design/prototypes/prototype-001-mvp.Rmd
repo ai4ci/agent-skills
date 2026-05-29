@@ -1,0 +1,79 @@
+---
+title: "Hello world MVP prototype"
+output: rmarkdown::html_vignette
+status: final
+target-version: "0.3.0"
+---
+<!-- @required: status one of draft|final|deprecated -->
+<!-- @required: target-version specified -->
+
+The prototype is in this case an RMarkdown document format but anything could work.
+
+## Links
+
+* [FEATURE](/design/features/feat-001-prints-hello-world.md) - the hello world
+* [FEATURE](/design/features/feat-002-greets-user-by-name.md) - greet by name
+<!-- @required: A link to the features implemented -->
+
+* [TESTDATA](/src/test/resources/test-data-001-mvp.csv)
+<!-- @optional: A path to test data this prototype generates -->
+<!-- if the prototype writes test data this should be present and the target exists -->
+
+## Methods
+
+The greet function uses the mathematical model based on the work of Einstein et al.
+
+$$
+\frac{1}{x} = \sqrt(y)
+$$
+
+In the case of a complex mathematical model the prototype as a quarto or RMarkdown file becomes part
+of the documentation and write up, maybe as supplementary material to a journal article - could include visualisations.
+
+```{r setup}
+here::i_am("design/prototypes/prototype-001-mvp.Rmd")
+```
+
+## Prototype:
+
+Prototype description and execution instructions:
+
+* any required setup, tear down considerations.
+* edge cases expected failures
+
+```{r}
+# A prototype function:
+greet = function(name) {
+  if (is.na(name)) name = "friend"
+  return(paste0(c(
+    "Hello world",
+    sprintf("How are you, %s?",name)
+  ),collapse="\n"))
+}
+```
+
+## User testing:
+
+Testing the prototype, might involve a html widget user interface, or a set of test cases:
+
+```{r}
+greet("Fred")
+greet("Jack")
+# Prototype inputs and results can be run by the developer and .
+```
+
+Visualisations of the prototype methods may be part of the documentation.
+
+## Test data:
+
+Generating test data from the prototype and writing it into the production code test cases:
+
+```{r}
+
+names = c("Fred", "Jack", NA)
+results = lapply(names, greet)
+test_data = tibble::tibble(name = names, result = unlist(results))
+
+readr::write_csv(test_data, here::here("src/test/resources/test-data-001-mvp.csv"))
+
+```

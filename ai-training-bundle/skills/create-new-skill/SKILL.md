@@ -15,7 +15,7 @@ A meta-skill for creating new Agent Skills. Use this skill when you need to scaf
 ## When to Use This Skill
 
 - User asks to "create a new skill", "make a new skill", "scaffold a skill", "make this into a skill" or similar.
-- User wants to add a specialised capability to their AI tool configuration.
+- User wants to add a specialized capability to their AI tool configuration.
 - User wants to embed domain specific knowledge or process for future reuse - "make this repeatable", "record this process", "remember how to do this in the future"
 - User needs help structuring a skill with bundled resources
 
@@ -253,16 +253,19 @@ Use words agents would search for:
 - Tools: Actual commands, library names, file types
 
 #### Available scripts section
+
 - if a procedural skill is performing deterministic actions, and these cannot be done very simply in one command using `bash`, `uvx`, `bunx` or `Rscript -e "..."`, or they need any form of complex invocation, implement them as a script: consult [creating scripts](/references/creating-scripts.md).
 - if a script is available in the `scripts/` directory it should be referenced by a relative link from the skill root, with details on how to call it and objectives in calling it.
 
 #### Prerequisites section
+
 - expected inputs for procedural skills including how to get them if missing (e.g. ask user)
 - will include system dependencies for running scripts.
 - might include agent or model dependencies in terms of context windows
 - will probably reference needed agent permissions for reading and writing or web access.
 
 #### Workflow section
+
 - for procedural skills this will be where the majority of the content is, for learning by process.
 - a common pattern is to use numbered headings for workflow steps with a description of the step in text.
 - some skills use mermaid, dot or plantuml workflow diagrams.
@@ -273,6 +276,7 @@ Use words agents would search for:
 - "MUST/NEVER/ALWAYS" language is useful for hard safety constraints, and mandatory checkpoints, but use sparingly, reasoning produces more adaptive behaviour.
 
 #### Guidance section
+
 - for capability skills the majority of content we be in here for learning by example.
 - may contain code snippets as examples for code generation tasks, and might link out to templates.
 - answers the question what does good look like?
@@ -281,12 +285,14 @@ Use words agents would search for:
 - steer away from using imperative language in this section.
 
 #### Validation section
+
 - this will vary depending on the nature of the skill
 - for procedural skills that have a structured output this may involve checks to make sure the outputs are syntactically correct. e.g. testing that should be undertaken, use of linting and formatting tools, schema validation in the case of structured outputs, check-boxes for more complex or unstructured outputs.
 - for capabilities it might include quality criteria checklists.
 - invoking a sub-agent to do validation is a good strategy for complex tasks
 
 #### Troubleshooting section
+
 - what to do in the event of a failure
 - how to answer queries, when to seek help
 
