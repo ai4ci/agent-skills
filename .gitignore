@@ -1,2 +1,5 @@
 **/.obsidian
 **/*.kate-swp
+.Rproj.user
+.pi/agent/auth.json
+**/node_modules
