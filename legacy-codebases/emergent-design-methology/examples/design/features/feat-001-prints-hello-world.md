@@ -1,9 +1,10 @@
 ---
 status: final
-target-version: "0.0.1"
+target-version: 0.0.1
 ---
 <!-- @required: status one of draft|final|deprecated -->
 <!-- @required: target-version specified -->
+<!-- @optional: tags containing comma separated list of tags. -->
 
 <!--N.b.  good titles might be expressed in the form "{action} {result} {object}" -->
 

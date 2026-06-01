@@ -1,5 +1,4 @@
 
-
 * The primary goal is to improve code maintainability and quality, and to make it possible for other agents and humans to understand the project.
 * Automated tests must be implemented.
 * Code quality metrics must be in place.

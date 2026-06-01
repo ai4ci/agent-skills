@@ -1,9 +1,10 @@
 ---
 status: draft
-target-version: "0.4.0"
+target-version: 0.4.0
 ---
 <!-- @required: status one of draft|final|deprecated -->
 <!-- @required: target-version specified -->
+<!-- @optional: tags containing comma separated list of tags. -->
 
 <!-- acts as a description of what will be implemented to allow review and sign-off -->
 
@@ -21,5 +22,5 @@ target-version: "0.4.0"
 * [FEATURE](/design/features/feat-003-introduce-yourself.md)
 <!-- @required: link to feature(s) this plan is implementing -->
 
-* [IMPACTS](/src/main/java/Greeter.class)
+* [IMPACTS](/src/main/java/Greeter.java)
 <!-- @optional: affected implementation code -->

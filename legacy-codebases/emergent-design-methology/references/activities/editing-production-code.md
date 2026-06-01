@@ -1,6 +1,6 @@
 Use this checklist to structure any interaction with the codebase when implementing features:
 
-Use the [`em` script](../tools/em-script) as a unified interface to the project to help you with this tasks.
+Use the [`em` script](../tools/em-script.md) as a unified interface to the project to help you with this tasks.
 
 ## Before editing production code
 
@@ -16,6 +16,7 @@ Use the [`em` script](../tools/em-script) as a unified interface to the project 
 - **Touch only what you must. Clean up only your own mess.**
 - Fail fast input validation when type safety cannot be guaranteed.
 - Include [developer comments and logging](./developer-comments-and-logging.md) in your new code.
+- Include linkage to design documentation in code comments: `// [IMPLEMENTS](/design/test-scripts/XXX.md)` or `// [IMPLEMENTS](/design/feature/YYY.md)`
 - Do not refactor unrelated code that happens to be nearby. 
 - Scope creep hides real changes inside noise.
 - Remove only the imports, helpers, or dead code that *your* change rendered unnecessary.

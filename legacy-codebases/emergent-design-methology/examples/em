@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# An example `em` script for this emergent design method example project
+#
 
 # Exit immediately if a command exits with a non-zero status
 set -e
@@ -12,6 +14,7 @@ RUN_LOG="$EM_DIR/log"
 TEST_LOG="$EM_DIR/test-output"
 DOC_LOG="$EM_DIR/docs-output"
 CHECK_LOG="$EM_DIR/check-output"
+DESIGN_LOG="$EM_DIR/design-output"
 
 # --- Helper Functions ---
 ensure_em_dir() {
@@ -26,6 +29,7 @@ show_help() {
     echo "  test    Builds and runs all automated tests (outputs to terminal and $TEST_LOG)"
     echo "  doc     Runs documentation tools (logs warnings/errors to $DOC_LOG)"
     echo "  check   Runs linters and code quality checks (logs report to $CHECK_LOG)"
+    echo "  design   Runs design consistency checks (logs report to $DESIGN_LOG)"
     echo "  help    Show this help message"
 }
 
@@ -35,12 +39,11 @@ cmd_run() {
     echo "Starting 'run' command..."
     ensure_em_dir
 
-    
     echo "Executing project with default configurations..." > "$RUN_LOG"
 
     # Example your project's build and execute logic here
     # This really needs to expose trace logging to the console with a log4j properties file. 
-    mvnd compile exec:java -Dexec.mainClass="Greeter" -Dexec.args="$@" | grep -v "Download" | tee "$RUN_LOG"
+    mvnd compile exec:java -Dexec.mainClass="Greeter" -Dexec.args="$@" | grep -v "Download" | tee -a "$RUN_LOG"
     
     echo "Run complete. Output logged to $RUN_LOG"
 }
@@ -49,13 +52,12 @@ cmd_test() {
     echo "Starting 'test' command..."
     ensure_em_dir
 
-    echo "Building and running automated tests..." | tee "$TEST_LOG"
+    echo "Building and running automated tests..." > "$TEST_LOG"
     
     # Example project's test suite command here
     # includes code coverage report
-    mvnd clean test jacoco:report | grep -v "https://repo.maven.apache.org" | tee -a "$TEST_LOG"
+    mvnd clean test jacoco:report | grep -v "Download" | tee -a "$TEST_LOG"
     
-    echo "[STUB] Test suite execution logic goes here" | tee -a "$TEST_LOG"
     echo "Test suite complete. Output saved to $TEST_LOG"
 }
 
@@ -63,14 +65,11 @@ cmd_doc() {
     echo "Starting 'doc' command..."
     ensure_em_dir
 
-    echo "Running documentation tools..."
+    echo "Running documentation tools..." > "$DOC_LOG"
     
     # TODO: Add your project's documentation tool here
     # Redirect stderr (warnings/errors) to the doc log, stdout to /dev/null or terminal
-    {
-        echo "[STUB] Documentation tool warnings/errors will appear below:"
-        mvnd javadoc:javadoc | grep -v "Download" >"$DOC_LOG" 2>&1
-    } > "$DOC_LOG"
+    mvnd javadoc:javadoc | grep -v "Download" | tee -a "$DOC_LOG"
 
     echo "Documentation generation complete. Warnings/errors logged to $DOC_LOG"
 }
@@ -79,17 +78,30 @@ cmd_check() {
     echo "Starting 'check' command..."
     ensure_em_dir
 
-    echo "Running linters and code quality checks..."
+    echo "Running linters and code quality checks..." > "CHECK_LOG"
     
-    # TODO: This also needs code coverage stats and code duplication analysis
-    {
-        echo "Code Quality Report - $(date)"
-        echo "-----------------------------------"
-        echo "[STUB] Linter tool reports go here"
-        mvnd spotless:check checkstyle:check spotbugs:check pmd:cpd-check dependency:analyze | grep -v "Download"
-    } > "$CHECK_LOG"
+    mvnd spotless:check checkstyle:check spotbugs:check pmd:cpd-check dependency:analyze | grep -v "Download" | tee -a "$CHECK_LOG"
 
     echo "Code quality check complete. Report written to $CHECK_LOG"
+}
+
+cmd_design() {
+    echo "Starting 'design' command..."
+    ensure_em_dir
+
+    echo "Running design consistency checks..." > "DESIGN_LOG"
+
+    # This path is true for this specific project but will need to be configured correctly per
+    # project. If the project is using a standards conformant agent harness and the skills are installed
+    # on a per project basis then this should work.
+    ".agents/skills/emergent-design-methodology/scripts/design-check.R" | tee -a "$DESIGN_LOG"
+
+}
+
+cmd_bump() {
+    echo "Bumping patch version numbers..."
+    mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion} versions:commit
+
 }
 
 # --- Main Argument Parsing ---
@@ -116,6 +128,12 @@ case "$COMMAND" in
         ;;
     check)
         cmd_check "$@"
+        ;;
+    design)
+        cmd_design "$@"
+        ;;
+    bump)
+        cmd_bump "$@"
         ;;
     --help|help|-h)
         show_help

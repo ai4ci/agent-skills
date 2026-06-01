@@ -1,0 +1,23 @@
+{
+    "src/main/java/Greeter.java": {
+        "modified": 1780071575,
+        "comments": {
+            "line: 66": "\t\t// EM: developer focussed documentation describing algorithm and control flow",
+            "line: 67": "\t\t// EM: about 10-25% of code base expected to be comments describing implementation"
+        },
+        "count_lines": 77,
+        "percent": 2.5974
+    },
+    "src/test/java/GreeterTest.java": {
+        "modified": 1780071553,
+        "comments": [],
+        "count_lines": 66,
+        "percent": 0
+    },
+    "src/test/java/InternationalGreeterTest.java": {
+        "modified": 1780072053,
+        "comments": [],
+        "count_lines": 42,
+        "percent": 0
+    }
+}

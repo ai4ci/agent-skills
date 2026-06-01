@@ -1,5 +1,4 @@
-
-* Rapid prototyping is required for all non-trivial features. This includes pre-existing features. A core idea behind this methodology is re-implemention of existing components as a retrospective prototype in a simpler framework which mirror expected functionality in a standalone way.
+Rapid prototyping is required for all non-trivial features. This includes pre-existing features. A core idea behind this methodology is re-implemention of existing components as a retrospective prototype in a simpler framework which mirror expected functionality in a standalone way.
 
 The purpose of a prototype are:
 

@@ -7,8 +7,6 @@ Legacy environments don’t always have robust pipelines — but they must be ab
 - Validate AI-generated PRs
 - Automate rollback if something breaks
 
-This gives AI freedom to suggest code — while your system retains final judgment.
-
 ### Test structure
 
 - Setup: Put the unit under test (UUT) or the overall test system in the state needed to run the test.

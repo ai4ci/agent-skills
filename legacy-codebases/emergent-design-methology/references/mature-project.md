@@ -1,5 +1,5 @@
 Working style
-* When implementing features or fixing issues with production code you must follow the [editing production code](./references/editing-production-code.md) guidance
+* When implementing features or fixing issues with production code you must follow the [editing production code](./activities/editing-production-code.md) guidance
 * 
 
 New features

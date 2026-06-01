@@ -6,11 +6,22 @@ metadata:
   author: Rob Challen
   version: 0.01
 ---
+
 # Practice emergent design
 
 Emergent design is a methodological framework for AI assisted software development that supports green field and legacy code. It is primarily designed to help you work with solo human developers who are used to working outside of traditional development methodologies, such as in research settings. You are helping turn their projects into maintainable and reusable code in a form that can be rapidly assimilated by new agents, can be safely extended or refactored, and which can be used in other agentic AI enabled projects.
 
 ---
+
+## Prerequisites
+
+1. [Language specific build and code quality tools](./references/tools/language-specific-build-tools.md)
+2. Code structure analysis tool: Graphify: R-enabled version: `uv tool install robchallen/graphifyy && graphify install`
+3. Code summarization tool: Repomix explorer `npm install -g repomix && npx skills add yamadashy/repomix -g`
+
+
+---
+
 ## When to use this skill
 
 * The user specifies or you have a memory that this project is to use "emergent design".
@@ -20,6 +31,7 @@ Emergent design is a methodological framework for AI assisted software developme
 * "Check my changes" when in an emergent design project suggests, either a legacy or mature project
 
 ---
+
 ## Fundamental principles
 
 These instructions are based around 3 different scenarios. The first task is to decide which is most relevant:
@@ -31,23 +43,23 @@ These instructions are based around 3 different scenarios. The first task is to 
 A mature emergent design project has the following characteristics:
 
 * A fully maintained design documentation folder with features, test-scripts, prototypes reflecting the scope of the project.
-* A production codebase that is automatically tested with very high code coverage, with the results stored in `.agents/em`.
-* Production code passes a full code quality check including formatting, linting, code duplication checks, with the results stored in `.agents/em`.
-* Exposes a language independent consistent mechanism to test the production code (the `em` script).
-* Contains tools to help navigate the code.
-* Contains skills that help AI agents use the code.
+* A production codebase that is automatically tested with very high code coverage, with the results recorded in `.agents/em/test-output`.
+* Production code passes a full code quality check including formatting, linting, code duplication checks, with the results recorded in `.agents/em/check-output`.
+* Exposes a language independent consistent mechanism to test the production code (the [`em` script](./references/tools/em-script.md)).
+* Contains tools to help connect design and production code: `.agents/em/files.tsv`, `.agents/em/links.tsv` and `.agents/em/implementation-notes.json` maintained by the [design-check.R](/scripts/design-check.R) script.
+* Contains skills that help AI agents use the code: `skills/`
 
 **Practical tip:** Inspect the `.agents/em` folder contents to see the results of tests and code and design quality checks to decide if this is a mature emergent design project, or a legacy project that is being migrated. 
 
 In all cases your goal is for the project to be completely documented, design and prototype driven production code, with full automated tests, and high quality defect free, minimally duplicated code, automatically monitored with metrics, with supporting AI skills.
 
-Based on the type of project follow the relevant guide:
+If you haven't been given a specific task, based on the type of project follow the relevant guide:
+
 * [working with legacy code](./references/legacy-code.md)
-* [set up green field project](references/green-field)
+* [set up green field project](references/green-field.md)
 * [extending a mature project](./references/mature-project.md)
 
-Discuss with the user if it is not clear which guide to follow.
-
+**Note:** Discuss with the user if it is not clear which guide to follow.
 
 ## Mapping out legacy code
 

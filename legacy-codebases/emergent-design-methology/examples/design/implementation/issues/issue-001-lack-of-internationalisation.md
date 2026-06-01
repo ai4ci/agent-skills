@@ -1,10 +1,11 @@
 ---
 status: open
-since-version: "0.0.1"
-target-version: "0.4.0"
+since-version: 0.0.1
+target-version: 0.4.0
 ---
 <!-- @required: status one of open|closed -->
 <!-- @required: target-version specified -->
+<!-- @optional: tags containing comma separated list of tags. -->
 
 <!-- issues are a summary of functional issues which maybe will come from github -->
 

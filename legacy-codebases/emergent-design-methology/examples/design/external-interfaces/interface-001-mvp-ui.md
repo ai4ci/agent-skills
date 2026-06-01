@@ -1,9 +1,11 @@
 ---
 status: final
-target-version: "0.3.0"
+target-version: 0.3.0
+tags: mvp
 ---
 <!-- @required: status one of draft|final|deprecated -->
 <!-- @required: target-version specified -->
+<!-- @optional: tags containing comma separated list of tags. -->
 
 Static prototype example
 

@@ -2,10 +2,12 @@
 title: "Hello world MVP prototype"
 output: rmarkdown::html_vignette
 status: final
-target-version: "0.3.0"
+target-version: 0.3.0
+tags: mvp
 ---
 <!-- @required: status one of draft|final|deprecated -->
 <!-- @required: target-version specified -->
+<!-- @optional: tags containing comma separated list of tags. -->
 
 The prototype is in this case an RMarkdown document format but anything could work.
 

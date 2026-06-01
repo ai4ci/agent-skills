@@ -1,7 +1,21 @@
 #!/usr/bin/env Rscript
 
+# Settings:
+
+EM_DESIGN_LINKS = c(
+  "FEATURE",
+  "TEST",
+  "PROTOTYPE",
+  "INTERFACE",
+  "REPRODUCES",
+  "TESTDATA",
+  "IMPLEMENTS",
+  "IMPACTS"
+)
+
+
 # Handle dependencies
-dependencies = c("optparse", "yaml", "fs", "dplyr", "stringr", "readr")
+dependencies = c("optparse", "yaml", "fs", "dplyr", "stringr", "readr", "jsonlite")
 for (dep in dependencies) {
   if (!requireNamespace(dep, quietly = TRUE)) {
     message("Installing dependency: ", dep)
@@ -9,16 +23,9 @@ for (dep in dependencies) {
   }
 }
 
-# 1. Define options
+# 1. Define options ----
+
 option_list = list(
-  optparse::make_option(
-    c("-o", "--output"),
-    type = "character",
-    default = NULL,
-    help = "an output file (defaults to stdout)",
-    metavar = "FILE"
-  ),
-  # Example parameter
   optparse::make_option(
     c("-d", "--dir"),
     type = "character",
@@ -34,42 +41,9 @@ opt_parser = optparse::OptionParser(
 )
 opt = optparse::parse_args(opt_parser)
 
-# 3. Handle output connection
-if (is.null(opt$output)) {
-  conn = stdout()
-} else {
-  conn = tryCatch(
-    {
-      out_dir = dirname(opt$output)
-      if (out_dir != "." && !dir.exists(out_dir)) {
-        dir.create(out_dir, recursive = TRUE)
-      }
-      file(opt$output, "w")
-    },
-    error = function(e) {
-      stop(
-        opt$output,
-        " could not be opened for writing: ",
-        e$message,
-        call. = FALSE
-      )
-    }
-  )
-}
+# 2. Find em directory & project root ----
 
-# 4. Find em directory & project root
-
-if (is.null(opt$dir)) {
-  git_dir = getwd()
-  while (!fs::dir_exists(fs::path(git_dir, ".git"))) {
-    git_dir = fs::path_dir(git_dir)
-    if (git_dir == fs::path_home()) {
-      stop("Could not find `.git` directory from: ", getwd())
-    }
-  }
-  dir = git_dir
-} else {
-  dir = fs::path_abs(opt$dir)
+.search_git = function(dir) {
   git_dir = dir
   while (!fs::dir_exists(fs::path(git_dir, ".git"))) {
     git_dir = fs::path_dir(git_dir)
@@ -77,13 +51,35 @@ if (is.null(opt$dir)) {
       stop("Could not find `.git` directory from: ", getwd())
     }
   }
+  return(git_dir)
 }
 
-message("Analysing directory: ", dir)
+if (is.null(opt$dir)) {
+  git_dir = .search_git(getwd())
+  dir = git_dir
+} else {
+  dir = fs::path_abs(opt$dir)
+  # dir = fs::path_expand("~/Git/agent-skills/legacy-codebases/emergent-design-methology/examples")
+  git_dir = .search_git(dir)
+}
 
-# dir = fs::path_expand("~/Git/agent-skills/legacy-codebases/emergent-design-methology/examples")
+
 em_dir = fs::path(dir, ".agents", "em")
 fs::dir_create(em_dir)
+
+# 3. Handle output connection ----
+
+conn = stdout()
+
+message("Analysing project directory: ", dir)
+message("Git root: ", git_dir)
+
+# 4. Load existing files ----
+
+em_dir = fs::path(dir, ".agents", "em")
+fs::dir_create(em_dir)
+
+# fs::file_delete(fs::path(em_dir, c("files.tsv","links.tsv")))
 
 ## setup / load existing em data ----
 files_file = fs::path(em_dir, "files.tsv")
@@ -92,7 +88,8 @@ if (!fs::file_exists(files_file)) {
     path = character(),
     modified = integer(),
     status = character(),
-    target_version = character()
+    target_version = character(),
+    tags = character()
   ), files_file)
 }
 previous_files = readr::read_tsv(files_file, col_types = "cicc")
@@ -108,11 +105,14 @@ if (!fs::file_exists(links_file)) {
 }
 current_links = readr::read_tsv(links_file, col_types = "cicc")
 
+# 5. Find project contents ----
+
 ## Read in git files ignoring .agents directory ----
 .files_ls = function(dir) {
+  setwd(git_dir)
   tmp = system2(
     "git",
-    c("ls-files", "-o", "--exclude-standard", dir),
+    c("ls-files", "-c", "-m", "-o", "--exclude-standard", dir),
     stdout = TRUE
   )
   tmp = fs::path(git_dir, tmp)
@@ -126,25 +126,35 @@ current_links = readr::read_tsv(links_file, col_types = "cicc")
     dplyr::filter(!startsWith(path, ".opencode")) %>%
     dplyr::filter(!startsWith(path, ".claude")) %>%
     dplyr::filter(!startsWith(path, ".copilot")) %>%
-    dplyr::filter(!startsWith(path, ".pi"))
+    dplyr::filter(!startsWith(path, ".pi")) %>%
+    dplyr::filter(path != "em")
   return(df)
 }
 
 current_files = .files_ls(dir)
+
 unchanged_files = previous_files %>% dplyr::semi_join(current_files, by = c("path", "modified"))
 updated_files = current_files %>% dplyr::anti_join(previous_files, by = c("path", "modified"))
 removed_files = previous_files %>% dplyr::anti_join(current_files, by = c("path", "modified"))
 
-## Metadata ----
+# 6. Extract metadata from yaml in files ----
 
 # md_file = "architecture/FRAMEWORK.md"
 # md_file = "design/features/feat-001-prints-hello-world.md"
 .extract_md_metadata = function(md_file) {
   metadata = dplyr::tibble(
     status = NA_character_,
-    `target-version` = NA_character_
+    target_version = NA_character_,
+    tags = NA_character_
   )
-  if (fs::path_ext(md_file) %in% c("md", "Rmd", "qmd")) {
+
+  # TODO: consider metadata in initial comments in non markdown files
+  # e.g. java files starting with:
+  # // ---
+  # // key: value
+  # // ---
+
+  if (!fs::path_ext(md_file) %in% c("md", "Rmd", "qmd")) {
     return(metadata)
   }
 
@@ -156,7 +166,7 @@ removed_files = previous_files %>% dplyr::anti_join(current_files, by = c("path"
       if (close > 2) {
         yaml = lines[2:(close - 1)]
         parsed = yaml::yaml.load(yaml)
-        metadata = dplyr::as_tibble(parsed)
+        metadata = dplyr::as_tibble(parsed) %>% dplyr::rename(target_version = `target-version`)
       } else {
         message("Empty yaml block: ", md_file)
       }
@@ -165,7 +175,7 @@ removed_files = previous_files %>% dplyr::anti_join(current_files, by = c("path"
     }
   }
   # May be no yaml header which is basically normal.
-  return(metadata %>% dplyr::rename(target_version = `target-version`))
+  return(metadata)
 }
 
 updated_files = updated_files %>%
@@ -180,12 +190,13 @@ current_files = dplyr::bind_rows(unchanged_files, updated_files) %>%
     path,
     modified,
     status,
-    target_version
+    target_version,
+    tags
   )
 
 readr::write_tsv(current_files, files_file)
 
-## Links ----
+# 7. find links in files ----
 
 # .extract_links(file = "design/features/feat-002-greets-user-by-name.md")
 # .extract_links(file = "src/main/java/Greeter.java")
@@ -196,7 +207,7 @@ readr::write_tsv(current_files, files_file)
   links = grepv("\\[[A-Z_]+\\]\\([^\\)]+\\)", lines, perl = TRUE)
 
   if (length(links) > 0) {
-    line_nos = which(grepv("\\[[A-Z_]+\\]\\([^\\)]+\\)", lines, perl = TRUE))
+    line_nos = which(grepl("\\[[A-Z_]+\\]\\([^\\)]+\\)", lines, perl = TRUE))
     types = gsub("^.*?\\[([A-Z_]+)\\]\\([^\\)]+\\).*$", "\\1", links, perl = TRUE)
     targets = gsub("^.*?\\[[A-Z_]+\\]\\(([^\\)]+)\\).*$", "\\1", links)
     targets = fs::path_rel(
@@ -228,22 +239,77 @@ new_links = dplyr::bind_rows(lapply(
   .extract_links
 ))
 
+# Select out the links that are supported in EM designs:
+new_links = new_links %>% dplyr::filter(type %in% EM_DESIGN_LINKS)
+
 unchanged_links = current_links %>%
   dplyr::anti_join(updated_files, by = c("source" = "path")) %>%
   dplyr::anti_join(removed_files, by = c("source" = "path"))
 
 current_links = dplyr::bind_rows(unchanged_links, new_links) %>%
   dplyr::arrange(source, type, target) %>%
-  dplyr::select(source, type, target)
+  dplyr::select(source, line_no, type, target)
 
 readr::write_tsv(current_links, links_file)
 
-## Quality checks ----
+# 8. Implementation file comments ----
+
+# Implementation files are things that are in a subdirectory but not a design
+# or architecture subdirectory, and are not linked to as test data.
+implementation = current_files %>%
+  dplyr::filter(!(
+    startsWith(path, "design") |
+      startsWith(path, "architecture")
+  ) & fs::path_dir(path) != ".") %>%
+  dplyr::anti_join(
+    current_links %>% dplyr::filter(type %in% c("TESTDATA")),
+    by = c("path" = "target")
+  )
+
+implementation_notes_file = fs::path(em_dir, "implementation-notes.json")
+if (fs::file_exists(implementation_notes_file)) {
+  implementation_notes = jsonlite::read_json(implementation_notes_file)
+} else {
+  implementation_notes = list()
+}
+
+new_implementation_notes = implementation %>%
+  dplyr::mutate(
+    lines = purrr::map(path, ~ readr::read_lines(fs::path(dir, .x))),
+    comments = purrr::map(lines, ~ {
+      line_no = which(grepl("^\\s*(?:\\/\\/|#['#]?|--|/\\*|%|<!--)\\s*EM:", .x))
+      comment = as.list(.x[line_no])
+      names(comment) = sprintf("line: %d", line_no)
+      comment
+    }),
+    count_lines = purrr::map_int(lines, ~ length(.x)),
+    percent = purrr::map2_dbl(comments, count_lines, ~ length(.x) / .y * 100)
+  ) %>%
+  dplyr::select(path, modified, comments, count_lines, percent)
+
+tmp = lapply(seq_len(nrow(new_implementation_notes)), function(i) {
+  row = new_implementation_notes[i, ]
+  ls = as.list(row %>% dplyr::select(-path))
+  ls = lapply(ls, unlist, recursive = FALSE)
+})
+names(tmp) = new_implementation_notes$path
+current_implementation_notes = modifyList(implementation_notes, tmp)
+
+current_implementation_notes = current_implementation_notes[order(names(current_implementation_notes))]
+
+jsonlite::write_json(
+  current_implementation_notes,
+  implementation_notes_file,
+  pretty = TRUE,
+  auto_unbox = TRUE
+)
+
+## 8. Perform quality checks on design graph ----
 
 .write_count = function(title, df) {
   write(sprintf("\n## %s: %d", title, nrow(df)), conn)
   if (nrow(df) > 0) {
-    readr::write_tsv(df, conn)
+    readr::write_tsv(df, conn, progress = FALSE)
   }
 }
 
@@ -254,44 +320,45 @@ targets = unique(current_links$target)
 exists = sapply(targets, function(t) fs::file_exists(fs::path(dir, t)))
 broken = targets[!exists]
 
+## Structural defects ----
+
 .write_count(
-  "Broken links",
+  "[Defect] Broken links",
   current_links %>% dplyr::filter(target %in% broken)
 )
 
 .write_count(
-  "Links with incorrect target type",
+  "[Defect] Links with incorrect target type",
   current_links %>% dplyr::filter(
-    (type == "FEATURE" & !startsWith(target, "design/feature")) |
-      (type == "TEST" & !startsWith(target, "design/test-script")) |
-      (type == "PROTOTYPE" & !startsWith(target, "design/prototype")) |
+    (type == "FEATURE" & !startsWith(target, "design/features")) |
+      (type == "TEST" & !startsWith(target, "design/test-scripts")) |
+      (type == "PROTOTYPE" & !startsWith(target, "design/prototypes")) |
       (type == "INTERFACE" & !startsWith(target, "design/external-interfaces")) |
       (type == "REPRODUCES" & !startsWith(target, "design/implementation/issues")) |
       (type == "IMPLEMENTS" &
         !(
-          startsWith(target, "design/test-script") |
-            startsWith(target, "design/feature") |
-            startsWith(target, "design/prototype") |
-            startsWith(target, "design/external-interface")
+          startsWith(target, "design/test-scripts") |
+            startsWith(target, "design/features") |
+            startsWith(target, "design/prototypes") |
+            startsWith(target, "design/external-interfaces")
         )
       )
   )
 )
 
 .write_count(
-  "Links with incorrect source type",
+  "[Defect] Links with incorrect source type",
   current_links %>% dplyr::filter(
     (type == "IMPACTS" & !(
       startsWith(source, "design/implementation/plans") |
         startsWith(source, "design/implementation/debt")
     )) |
       (type == "TESTDATA" & !(
-        startsWith(source, "design/test-script") |
-          startsWith(source, "design/prototype")
+        startsWith(source, "design/test-scripts") |
+          startsWith(source, "design/prototypes")
       ))
   )
 )
-
 
 ## Design defects ----
 
@@ -308,14 +375,6 @@ broken = targets[!exists]
     )
 )
 
-# All features have status and target-version:
-.write_count(
-  "[Defect] Features without correct metadata",
-  current_files %>%
-    dplyr::filter(startsWith(path, "design/features") &
-      (is.na(status) | is.na(`target-version`)))
-)
-
 # All design artifacts have status and target-version:
 .write_count(
   "[Defect] Design artifacts without correct metadata",
@@ -327,7 +386,7 @@ broken = targets[!exists]
         startsWith(path, "design/external-interfaces") |
         startsWith(path, "design/test-scripts")
     ) &
-      (is.na(status) | is.na(`target-version`))
+      (is.na(status) | is.na(target_version))
   )
 )
 
@@ -393,7 +452,7 @@ broken = targets[!exists]
     )
 )
 
-# Tests without implementation
+# Features or test-scripts without prototypes or external interfaces.
 .write_count(
   "[Advisory] Final features or test scripts without prototype or interface",
   current_files %>%
@@ -407,27 +466,23 @@ broken = targets[!exists]
     )
 )
 
-# Implementation files are things that are in a subdirectory but not a design
-# or architecture subdirectory, and are not linked to as test data.
-implementation = current_files %>%
-  dplyr::filter(!(
-    startsWith(path, "design") |
-      startsWith(path, "architecture")
-  ) & fs::path_dir(path) != ".") %>%
-  dplyr::anti_join(
-    current_links %>% dplyr::filter(type %in% c("TESTDATA")),
-    by = c("path" = "target")
-  )
-
+# Implementation files not linked to designs, test-scripts or issues
 .write_count(
-  "[Advisory] Implementation files with no links to design",
+  "[Advisory] Implementation files with no links to design feature, test-scripts or issues",
   implementation %>%
     dplyr::anti_join(
-      current_links %>% dplyr::filter(type %in% c("IMPLEMENTS")),
+      current_links %>% dplyr::filter(type %in% c("IMPLEMENTS", "REPRODUCES")),
       by = c("path" = "source")
     )
 )
 
+# Implementation files 10-25% EM comments
+.write_count(
+  "[Advisory] Implementation files with comments < 10% or > 25%",
+  dplyr::bind_rows(current_implementation_notes %>% purrr::discard(
+    ~ .x$percent > 10 & .x$percent < 25
+  ) %>% purrr::imap(~ dplyr::tibble(path = .y, percent = .x$percent)))
+)
 
 # 5. Tidy up
 # Close connection if it's a file

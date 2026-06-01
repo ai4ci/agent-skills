@@ -1,6 +1,7 @@
 ---
 status: draft
-target-version: "0.4.0"
+target-version: 0.4.0
+tags: mvp
 ---
 <!-- @required: status one of draft|final|deprecated -->
 <!-- @required: target-version specified -->

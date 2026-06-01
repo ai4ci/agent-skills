@@ -1,33 +1,71 @@
-
 ## Quality assuring design
 
-* 
-* All features described in `design/SCOPE.md` has a link to a markdown file in `design/features`
-* All files in `design/features`
-* The directory structure of `design/implementation/notes` mirrors that of the production source code directory.
-* All markdown files in `design/implementation/notes` subdirectories have a 1:1 relationship with source code files.
-* All source code files have an corresponding `design/implementation/notes` markdown file.
-* All markdown files in design have been checked with [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) and [lychee](https://github.com/lycheeverse/lychee) for structural consistency and broken links
+The [design-check.R](../../scripts/design-check.R) script analyses design documents and implementation code.
 
-## Validation tools
+1. Extract metadata from yaml in design documentation files and stores it in `.agents/em/files.tsv`
+2. Find links between design documentation and implementation code and stores it in `.agents/em/links.tsv`
+3. Extracts implementation developer comments and stores it in `.agents/em/implementation-notes.json`
 
-### 1. Markdown documentation
+The script enforces a set of constraints that make sure that design documents are correctly linked to production code and test cases. The links use markdown links (relative or absolute from the root of the project) with the following alt texts, e.g. `[FEATURE](/design/feature/feat-001.md)`:
 
-Markdown files (`.md`, `.qmd`, `.Rmd`) are frequently updated by agents generating READMEs or documentation files. Unvalidated Markdown often suffers from broken links, malformed tables, and structural inconsistency. [3, 4]
+- "FEATURE" which features are relevant:
+  - source: Various design artifacts, especially prototype, test-scripts.
+  - target: A feature: `/design/features/AAA.md`
+- "TEST" which test scripts relate to a feature:
+  - source: usually a feature
+  - target: A test-script: `/design/test-scripts/BBB.md`
+- "PROTOTYPE" which prototypes relate to a feature:
+  - source: usually a feature
+  - target: A prototype: `/design/prototypes/CCC.md`
+- "INTERFACE" which external interfaces relate to a feature:
+  - source: usually a feature
+  - target: A specification of an external interface: `/design/external-interfaces/DDD.md`
+- "REPRODUCES" which test cases reproduce and issue:
+  - source: test case
+  - target: An implementation issue: `/design/implementation/issues/EEE.md`
+- "TESTDATA" which test data is produced by a prototype or used by a test-script
+  - source: a test script (uses) or prototype (produces)
+  - target: A test data file (langague specific location)
+- "IMPLEMENTS" which features does production code implement or test scripts are implemented by test code.
+  - source: production code or test case.
+  - target: A design feature `/design/features/AAA.md`, test-script `/design/test-scripts/BBB.md`, prototype `/design/prototypes/CCC.md` or external interfaces `/design/external-interfaces/DDD.md`
 
-* All-in-One Linting & Formatting: DavidAnson/markdownlint-cli2 (`markdownlint-cli2`)
-  * _Agentic Value:_ This is a blazingly fast, configuration-driven Markdown syntax linter. It catches common structural errors like incorrect header nesting (e.g., `# H1` followed directly by `### H3`), missing alt text on images, and trailing whitespaces. It natively supports outputting errors to a clean JSON array file.
-  * _Command:_ `markdownlint-cli2 "**/*.md" --json`
+## Quality checks on design graph
 
-* Hyperlink Validation & Link-Rot Prevention: Lychee (`lychee`)
-  * _Agentic Value:_ A high-performance concurrent link checker written in Rust. It reads Markdown structures instantly to validate all embedded internal files, relative directory paths, and external HTTP hyperlinks. It outputs a deterministic JSON data log of broken URLs so the agent knows exactly which links need updating.
-  * _Command:_ `lychee --format json -o link-report.json "**/*.md"`
+The [design-check.R](../../scripts/design-check.R) script produces specific warnings:
 
-### 2. Architecture diagramming
+### Structural defects
+
+- `[Defect] Broken links`
+- `[Defect] Links with incorrect target type`
+- `[Defect] Links with incorrect source type`
+
+## Design defects ----
+
+- `[Defect] Features not in SCOPE`: All non deprecated features must be linked to from SCOPE.md
+- `[Defect] Design artifacts without correct metadata`: All design artifacts have status and target-version
+- `[Defect] Design artifacts without linked feature`: design artifacts must be linked to a feature (except issues)
+- `[Defect] Final features not linking to test-scripts`: When a feature has a final status it must link to one or more test-scripts
+- `[Defect] Open issues not reproduced as a test case`: Open issues must have linked reproducible test cases
+
+## Design improvement targets ----
+
+- `[Advisory] Final features without implementation`: Features without implementation
+- `[Advisory] Final test scripts without implementation`: Tests without implementation
+- `[Advisory] Final features or test scripts without prototype or interface`: Features or test-scripts without prototypes or external interfaces.
+- `[Advisory] Implementation files with no links to design, test-scripts or issues`: Implementation files not linked to designs, test-scripts or issues
+- `[Advisory] Implementation files with comments < 10% or > 25%`: Implementation files 10-25% EM comments
+
+## Other validation tools
+
+* Use lychee for link checking outside of design documentation links: (`https://github.com/lycheeverse/lychee`), with the `--root-dir` option set to the root of the project `lychee --root-dir . .`.
+* Use all-in-One linting & formatting: DavidAnson/markdownlint-cli2 (`markdownlint-cli2`) is a markdown syntax linter.
+
+## Architecture diagramming
 
 The optimal CLI architecture diagramming suite for an automated AI agent skill consists of the following tools:
 
-#### Mermaid.js (`.mmd`, `.mermaid`)
+### Mermaid.js (`.mmd`, `.mermaid`)
 
 Because it uses a highly intuitive, markdown-like declarative text syntax, Mermaid is often the easiest diagram format for an LLM to generate natively.
 
@@ -35,7 +73,7 @@ Because it uses a highly intuitive, markdown-like declarative text syntax, Merma
   * _Agentic Value:_ This is a pure command-line wrapper around Mermaid that runs headlessly via Puppeteer. It serves a critical dual purpose: passing a file to it validates the syntax structure (throwing a non-zero exit code if the agent breaks a bracket layout), and successful passes compile the text directly into structured SVG or PNG graphics for external documentation files.
   * _Command:_ `npx mmdc -i architecture.mmd -o architecture.svg`
 
-#### PlantUML (`.puml`, `.plantuml`)
+### PlantUML (`.puml`, `.plantuml`)
 
 Get plantuml: <https://github.com/plantuml/plantuml/releases>
 Reference guide: <http://alphadoc.plantuml.com/raw/markdown/en/index-full>
@@ -47,7 +85,7 @@ PlantUML is the industry standard for deep software engineering maps (like UML c
   * _Command (Syntax Check):_ `java -jar plantuml.jar -syntax diagram.puml`
   * _Command (Headless Render):_ `java -jar plantuml.jar -tsvg diagram.puml`
 
-#### Graphviz / DOT Language (`.dot`, `.gv`)
+### Graphviz / DOT Language (`.dot`, `.gv`)
 
 Graphviz is a more general purpose tool that the others. When an agent needs to programmatically construct highly complex network nodes, cluster maps, or automated code call-graphs.
 

@@ -1,5 +1,10 @@
+You've been asked to migrate a project to emergent design or set up a new emergent design project
 
-Emergent design projects must be version controlled with `git`. If the project is not already versioned controlled, a `git init` must be performed.
+## Prerequisites
+
+1. Code structure analysis tool: Graphify: R-enabled version: `uv tool install robchallen/graphifyy && graphify install`
+2. Code summarization tool: Repomix explorer `npm install -g repomix && npx skills add yamadashy/repomix -g`
+3. Emergent design projects must be version controlled with `git`. If the project is not already versioned controlled, a `git init` must be performed.
 
 ## Make code quality and build tools available
 
@@ -10,17 +15,18 @@ Select and install a suite of [build tools](../tools/language-specific-build-too
 Set up the following folder structure in the root of the project:
 
 1. `design`
-	 	* `SCOPE.md`
-	 	* `features`:  (as-is and to-be) - ([[feature]] template)
-	 	* `issues`
+	 	* `SCOPE.md`: implemented and planned features
+	 	* `features`:  as-is and to-be features
 	 	* `external-interfaces`: user interface, api and database structures
-	 	* `test-scripts` - ([[test-script]] template)
-	 	* `prototypes` -  ([[prototype]] template)
-	 	* `implementation` - ([[implementation-plans]] template)
+	 	* `test-scripts` - test scripts
+	 	* `prototypes` - prototypes
+	 	* `implementation/plans` - detailed plans for implementation of new features
+	 	* `implementation/issues` - issue summaries
+	 	* `implementation/debt` - technical debt records
 2. `architecture`
-	 	* `FRAMEWORK.md`
-	 	* `decision-records` ([[adr]] template)
-	 	* `STANDARDS.md`
+	 	* `FRAMEWORK.md` - overarching technical framework description.
+	 	* `decision-records` - architectural decision records
+	 	* `STANDARDS.md` - code standards
 3. Production code (language specific layout)
 	 	* Source code
 	 	* Unit tests
@@ -31,10 +37,15 @@ Set up the following folder structure in the root of the project:
 	 	* `installing-<project>` - installation instructions
 	 	* `getting-started-with-<project>` - instructions on downstream use of the project
 	 	* `extending-<project>` - instructions on extending the project
+	 	* Other skill directories will be created as needed.
 5. Documentation (language specific layout - usually `docs`)
 	 	* User documentation
 	 	* `README.md`
 	 	* `CONTRIBUTING.md`
+6. `em` working directory:
+        * `.agents/em` - Location for output of code quality and design quality checks.
+
+The following bash commands should do this (substituting <project> for the project name):
 
 ```bash
 mkdir -p design
@@ -44,6 +55,9 @@ mkdir -p design/external-interfaces
 mkdir -p design/test-scripts
 mkdir -p design/prototypes
 mkdir -p design/implementation
+mkdir -p design/implementation/debt
+mkdir -p design/implementation/issues
+mkdir -p design/implementation/plans
 mkdir -p architecture
 touch architecture/FRAMEWORK.md
 mkdir architecture/decision-records
@@ -56,7 +70,7 @@ mkdir -p skills/extending-<project>
 
 ## Setup the `em` script
 
-The [`em` script](../tools/em-script.md) is unified interface to build tools, and must be found in the root of the project. A skeleton `em` script is as follows:
+The [`em` script](../tools/em-script.md) is unified interface to build tools specific for this project, and must be found in the root of the project. A skeleton `em` script is as follows:
 
 ```bash
 #!/bin/bash
@@ -84,6 +98,7 @@ show_help() {
     echo "  test    Builds and runs all automated tests and code coverage (outputs to terminal and $TEST_LOG)"
     echo "  doc     Runs documentation tools (logs warnings/errors to $DOC_LOG)"
     echo "  check   Runs linters and code quality checks (logs report to $CHECK_LOG)"
+    echo "  design   Runs design consistency checks (logs report to $DESIGN_LOG)"
     echo "  bump    Updates the version number of the project"
     echo "  help    Show this help message"
 }
@@ -154,6 +169,19 @@ cmd_check() {
     echo "Code quality check complete. Report written to $CHECK_LOG"
 }
 
+cmd_design() {
+    echo "Starting 'design' command..."
+    ensure_em_dir
+
+    echo "Running design consistency checks..." > "DESIGN_LOG"
+
+    # TODO: This path is true for this specific project but will need to be configured correctly per
+    # project. If the project is using a standards conformant agent harness and the skills are installed
+    # on a per project basis then this should work.
+    ".agents/skills/emergent-design-methodology/scripts/design-check.R" | tee -a "$DESIGN_LOG"
+
+}
+
 cmd_bump() {
     echo "Bumping code version..."
     
@@ -184,6 +212,9 @@ case "$COMMAND" in
         ;;
     check)
         cmd_check "$@"
+        ;;
+    design)
+        cmd_design "$@"
         ;;
     bump)
         cmd_bump "$@"
@@ -240,4 +271,11 @@ It can be used without installation via `npx` and it comes with an agent skill t
 
 ```
 npx skills add yamadashy/repomix --skill repomix-explorer
+```
+[Graphify](https://github.com/robchallen/graphify) is a code structure analysis tool. It helps AI coding assistants understand multi-modal codebases by building a queryable knowledge graph from code, docs, papers and diagrams.
+
+This fork has support for R as well as other mainstream languages:
+
+```
+uv tool install robchallen/graphifyy && graphify install
 ```
