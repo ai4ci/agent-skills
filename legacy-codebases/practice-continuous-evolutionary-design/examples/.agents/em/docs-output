@@ -1,0 +1,28 @@
+Running documentation tools...
+[INFO] Processing build on daemon 5611254a
+[INFO] Scanning for projects...
+[INFO] BuildTimeEventSpy is registered.
+[INFO] 
+[INFO] Using the SmartBuilder implementation with a thread count of 15
+[INFO] 
+[INFO] --------------< io.github.ai4ci:continuous-evolutionary-design-example >---------------
+[INFO] Building continuous-evolutionary-design-example 0.3.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> javadoc:3.12.0:javadoc (default-cli) > generate-sources @ continuous-evolutionary-design-example >>>
+[INFO] 
+[INFO] --- jacoco:0.8.14:prepare-agent (default) @ continuous-evolutionary-design-example ---
+[INFO] argLine set to -javaagent:/home/vp22681/.m2/repository/org/jacoco/org.jacoco.agent/0.8.14/org.jacoco.agent-0.8.14-runtime.jar=destfile=/home/vp22681/Git/agent-skills/legacy-codebases/practice-continuous-evolutionary-design/examples/target/jacoco.exec
+[INFO] 
+[INFO] <<< javadoc:3.12.0:javadoc (default-cli) < generate-sources @ continuous-evolutionary-design-example <<<
+[INFO] 
+[INFO] 
+[INFO] --- javadoc:3.12.0:javadoc (default-cli) @ continuous-evolutionary-design-example ---
+[WARNING] Source files encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  4.063 s (Wall Clock)
+[INFO] Finished at: 2026-06-04T10:16:51+01:00
+[INFO] ------------------------------------------------------------------------

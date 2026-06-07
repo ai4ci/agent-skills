@@ -1,0 +1,113 @@
+Building and running automated tests...
+[INFO] Processing build on daemon 5611254a
+[INFO] Scanning for projects...
+[INFO] BuildTimeEventSpy is registered.
+[INFO] 
+[INFO] Using the SmartBuilder implementation with a thread count of 15
+[INFO] 
+[INFO] --------------< io.github.ai4ci:continuous-evolutionary-design-example >---------------
+[INFO] Building continuous-evolutionary-design-example 0.3.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ continuous-evolutionary-design-example ---
+[INFO] Deleting /home/vp22681/Git/agent-skills/legacy-codebases/practice-continuous-evolutionary-design/examples/target
+[INFO] 
+[INFO] --- jacoco:0.8.14:prepare-agent (default) @ continuous-evolutionary-design-example ---
+[INFO] argLine set to -javaagent:/home/vp22681/.m2/repository/org/jacoco/org.jacoco.agent/0.8.14/org.jacoco.agent-0.8.14-runtime.jar=destfile=/home/vp22681/Git/agent-skills/legacy-codebases/practice-continuous-evolutionary-design/examples/target/jacoco.exec
+[INFO] 
+[INFO] --- resources:3.4.0:resources (default-resources) @ continuous-evolutionary-design-example ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ continuous-evolutionary-design-example ---
+[INFO] Recompiling the module because of changed source code.
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Compiling 1 source file with javac [debug target 1.8] to target/classes
+[WARNING] bootstrap class path is not set in conjunction with -source 8
+  not setting the bootstrap class path may lead to class files that cannot run on JDK 8
+    --release 8 is recommended instead of -source 8 -target 1.8 because it sets the bootstrap class path automatically
+[WARNING] source value 8 is obsolete and will be removed in a future release
+[WARNING] target value 8 is obsolete and will be removed in a future release
+[WARNING] To suppress warnings about obsolete options, use -Xlint:-options.
+[INFO] 
+[INFO] --- resources:3.4.0:testResources (default-testResources) @ continuous-evolutionary-design-example ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 1 resource from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ continuous-evolutionary-design-example ---
+[INFO] Recompiling the module because of changed dependency.
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Compiling 2 source files with javac [debug target 1.8] to target/test-classes
+[WARNING] bootstrap class path is not set in conjunction with -source 8
+  not setting the bootstrap class path may lead to class files that cannot run on JDK 8
+    --release 8 is recommended instead of -source 8 -target 1.8 because it sets the bootstrap class path automatically
+[WARNING] source value 8 is obsolete and will be removed in a future release
+[WARNING] target value 8 is obsolete and will be removed in a future release
+[WARNING] To suppress warnings about obsolete options, use -Xlint:-options.
+[INFO] 
+[INFO] --- surefire:3.5.2:test (default-test) @ continuous-evolutionary-design-example ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running InternationalGreeterTest
+[INFO] [stdout] Hello world
+[INFO] [stdout] How are you, Pierre?
+[INFO] [stdout] 
+[ERROR] Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.186 s <<< FAILURE! -- in InternationalGreeterTest
+[ERROR] InternationalGreeterTest.testLocale -- Time elapsed: 0.162 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:31)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:183)
+	at InternationalGreeterTest.testLocale(InternationalGreeterTest.java:38)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+[INFO] Running GreeterTest
+[INFO] [stdout] Usage: greet [-hV] [<name>]
+[INFO] [stdout] Greets a user
+[INFO] [stdout]       [<name>]    The name of the person to greet
+[INFO] [stdout]   -h, --help      Show this help message and exit.
+[INFO] [stdout]   -V, --version   Print version information and exit.
+[INFO] [stdout] 
+[INFO] [stdout] Hello world
+[INFO] [stdout] How are you, Fred?
+[INFO] [stdout] 
+[INFO] [stdout] Hello world
+[INFO] [stdout] How are you, Jack?
+[INFO] [stdout] 
+[INFO] [stdout] Hello world
+[INFO] [stdout] How are you, friend?
+[INFO] [stdout] 
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.126 s -- in GreeterTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Failures: 
+[ERROR]   InternationalGreeterTest.testLocale:38 expected: <true> but was: <false>
+[INFO] 
+[ERROR] Tests run: 5, Failures: 1, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  2.517 s (Wall Clock)
+[INFO] Finished at: 2026-06-04T10:10:20+01:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.2:test (default-test) on project continuous-evolutionary-design-example: There are test failures.
+[ERROR] 
+[ERROR] See /home/vp22681/Git/agent-skills/legacy-codebases/practice-continuous-evolutionary-design/examples/target/surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

@@ -1,0 +1,15 @@
+
+# Language specific
+/target/
+/.settings/
+.classpath
+.project
+
+# For this example project we are excluding these from the repository
+# This is probably not something you would exclude in a real project
+graphify-out/
+repomix-.config.json
+
+# In general you would also want these
+graphify-out/cost.json
+graphify-out/cache/

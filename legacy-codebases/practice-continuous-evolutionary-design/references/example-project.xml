@@ -1,0 +1,1537 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.agents/
+  em/
+    check-output
+    design-output
+    docs-output
+    files.tsv
+    implementation-notes.json
+    jacoco.csv
+    links.tsv
+    run-output
+    test-output
+architecture/
+  decision-records/
+    adr-001-picocli.md
+  FRAMEWORK.md
+  STANDARDS.md
+design/
+  external-interfaces/
+    interface-001-mvp-ui.md
+  features/
+    feat-001-prints-hello-world.md
+    feat-002-greets-user-by-name.md
+    feat-003-introduce-yourself.md
+  implementation/
+    debt/
+      debt-001-missing-abstraction.md
+    issues/
+      issue-001-lack-of-internationalisation.md
+    plans/
+      plan-001-introduce-yourself.md
+  prototypes/
+    prototype-001-mvp.Rmd
+  test-scripts/
+    test-001-script-for-mvp.md
+  SCOPE.md
+src/
+  main/
+    java/
+      Greeter.java
+  test/
+    java/
+      GreeterTest.java
+      InternationalGreeterTest.java
+    resources/
+      test-data-001-mvp.csv
+.gitignore
+em
+pom.xml
+README.md
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path=".agents/em/check-output">
+Running linters and code quality checks...
+[INFO] Processing build on daemon 3310f958
+[INFO] Scanning for projects...
+[INFO] BuildTimeEventSpy is registered.
+[INFO] 
+[INFO] Using the SmartBuilder implementation with a thread count of 15
+[INFO] 
+[INFO] --------------< io.github.ai4ci:continuous-evolutionary-design-example >---------------
+[INFO] Building continuous-evolutionary-design-example 0.3.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- spotless:2.43.0:check (default-cli) @ continuous-evolutionary-design-example ---
+[INFO] Spotless.Java is keeping 3 files clean - 0 needs changes to be clean, 0 were already clean, 3 were skipped because caching determined they were already clean
+[INFO] 
+[INFO] --- checkstyle:3.3.1:check (default-cli) @ continuous-evolutionary-design-example ---
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Starting audit...
+Audit done.
+[INFO] You have 0 Checkstyle violations.
+[INFO] 
+[INFO] >>> spotbugs:4.9.8.0:check (default-cli) > :spotbugs @ continuous-evolutionary-design-example >>>
+[INFO] 
+[INFO] --- spotbugs:4.9.8.0:spotbugs (spotbugs) @ continuous-evolutionary-design-example ---
+[INFO] Fork Value is true
+[INFO] Done SpotBugs Analysis....
+[INFO] Skipping com.github.spotbugs:spotbugs-maven-plugin:4.9.8.0:spotbugs report goal
+[INFO] 
+[INFO] <<< spotbugs:4.9.8.0:check (default-cli) < :spotbugs @ continuous-evolutionary-design-example <<<
+[INFO] 
+[INFO] 
+[INFO] --- spotbugs:4.9.8.0:check (default-cli) @ continuous-evolutionary-design-example ---
+[INFO] BugInstance size is 0
+[INFO] Error size is 0
+[INFO] No errors/warnings found
+[INFO] 
+[INFO] >>> pmd:3.23.0:cpd-check (default-cli) > :cpd @ continuous-evolutionary-design-example >>>
+[INFO] 
+[INFO] --- pmd:3.23.0:cpd (cpd) @ continuous-evolutionary-design-example ---
+[WARNING] Unable to locate Source XRef to link to - DISABLED
+[INFO] PMD version: 7.0.0
+[INFO] Rendering content with org.apache.maven.skins:maven-default-skin:jar:1.3 skin.
+[INFO] 
+[INFO] <<< pmd:3.23.0:cpd-check (default-cli) < :cpd @ continuous-evolutionary-design-example <<<
+[INFO] 
+[INFO] 
+[INFO] --- pmd:3.23.0:cpd-check (default-cli) @ continuous-evolutionary-design-example ---
+[INFO] PMD version: 7.0.0
+[INFO] 
+[INFO] 
+[INFO] >>> dependency:3.7.0:analyze (default-cli) > test-compile @ continuous-evolutionary-design-example >>>
+[INFO] 
+[INFO] --- jacoco:0.8.14:prepare-agent (default) @ continuous-evolutionary-design-example ---
+[INFO] argLine set to -javaagent:/home/vp22681/.m2/repository/org/jacoco/org.jacoco.agent/0.8.14/org.jacoco.agent-0.8.14-runtime.jar=destfile=/home/vp22681/Git/agent-skills/legacy-codebases/practice-continuous-evolutionary-design/examples/target/jacoco.exec
+[INFO] 
+[INFO] --- resources:3.4.0:resources (default-resources) @ continuous-evolutionary-design-example ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ continuous-evolutionary-design-example ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.4.0:testResources (default-testResources) @ continuous-evolutionary-design-example ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 1 resource from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ continuous-evolutionary-design-example ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] <<< dependency:3.7.0:analyze (default-cli) < test-compile @ continuous-evolutionary-design-example <<<
+[INFO] 
+[INFO] 
+[INFO] --- dependency:3.7.0:analyze (default-cli) @ continuous-evolutionary-design-example ---
+[WARNING] Used undeclared dependencies found:
+[WARNING]    org.junit.jupiter:junit-jupiter-api:jar:5.11.4:test
+[WARNING]    org.junit.jupiter:junit-jupiter-params:jar:5.11.4:test
+[WARNING]    ch.qos.reload4j:reload4j:jar:1.2.22:compile
+[WARNING] Unused declared dependencies found:
+[WARNING]    org.slf4j:slf4j-reload4j:jar:2.0.18:compile
+[WARNING]    org.junit.jupiter:junit-jupiter:jar:5.11.4:test
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  7.806 s (Wall Clock)
+[INFO] Finished at: 2026-06-04T10:21:37+01:00
+[INFO] ------------------------------------------------------------------------
+</file>
+
+<file path=".agents/em/design-output">
+Running design consistency checks...
+Usage: .agents/skills/practice-continuous-evolutionary-design/scripts/design-check.R [options]
+Check continuous evolutionary design documents for consistency
+
+Options:
+	-d DIRECTORY, --dir=DIRECTORY
+		the root directory of the project
+
+	-x, --no-save
+		omit saving the changes to the history
+
+	-h, --help
+		Show this help message and exit
+</file>
+
+<file path=".agents/em/docs-output">
+Running documentation tools...
+[INFO] Processing build on daemon 5611254a
+[INFO] Scanning for projects...
+[INFO] BuildTimeEventSpy is registered.
+[INFO] 
+[INFO] Using the SmartBuilder implementation with a thread count of 15
+[INFO] 
+[INFO] --------------< io.github.ai4ci:continuous-evolutionary-design-example >---------------
+[INFO] Building continuous-evolutionary-design-example 0.3.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> javadoc:3.12.0:javadoc (default-cli) > generate-sources @ continuous-evolutionary-design-example >>>
+[INFO] 
+[INFO] --- jacoco:0.8.14:prepare-agent (default) @ continuous-evolutionary-design-example ---
+[INFO] argLine set to -javaagent:/home/vp22681/.m2/repository/org/jacoco/org.jacoco.agent/0.8.14/org.jacoco.agent-0.8.14-runtime.jar=destfile=/home/vp22681/Git/agent-skills/legacy-codebases/practice-continuous-evolutionary-design/examples/target/jacoco.exec
+[INFO] 
+[INFO] <<< javadoc:3.12.0:javadoc (default-cli) < generate-sources @ continuous-evolutionary-design-example <<<
+[INFO] 
+[INFO] 
+[INFO] --- javadoc:3.12.0:javadoc (default-cli) @ continuous-evolutionary-design-example ---
+[WARNING] Source files encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  4.063 s (Wall Clock)
+[INFO] Finished at: 2026-06-04T10:16:51+01:00
+[INFO] ------------------------------------------------------------------------
+</file>
+
+<file path=".agents/em/files.tsv">
+path	modified	status	target_version	tags
+README.md	1780562550	NA	NA	NA
+architecture/FRAMEWORK.md	1779216952	NA	NA	NA
+architecture/STANDARDS.md	1779216952	NA	NA	NA
+architecture/decision-records/adr-001-picocli.md	1780070724	final	0.3.0	NA
+checkstyle.xml	1779216952	NA	NA	NA
+code-style.xml	1779204117	NA	NA	NA
+design/SCOPE.md	1780398857	NA	NA	NA
+design/external-interfaces/interface-001-mvp-ui.md	1780498560	final	0.3.0	mvp
+design/features/feat-001-prints-hello-world.md	1780498583	final	0.0.1	NA
+design/features/feat-002-greets-user-by-name.md	1780590381	final	0.3.0	mvp
+design/features/feat-003-introduce-yourself.md	1780495794	draft	0.4.0	mvp
+design/implementation/debt/debt-001-missing-abstraction.md	1780302787	open	0.4.0	NA
+design/implementation/issues/issue-001-lack-of-internationalisation.md	1780497786	open	0.4.0	NA
+design/implementation/plans/plan-001-introduce-yourself.md	1780398857	draft	0.4.0	NA
+design/prototypes/prototype-001-mvp.Rmd	1780499037	final	0.3.0	mvp
+design/test-scripts/test-001-script-for-mvp.md	1780571083	final	0.3.0	mvp
+pom.xml	1780564189	NA	NA	NA
+repomix.config.json	1780565094	NA	NA	NA
+src/main/java/Greeter.java	1780577453	NA	NA	NA
+src/test/java/GreeterTest.java	1780589759	NA	NA	NA
+src/test/java/InternationalGreeterTest.java	1780564344	draft	0.3.0	mvp
+src/test/resources/test-data-001-mvp.csv	1779200502	NA	NA	NA
+</file>
+
+<file path=".agents/em/implementation-notes.json">
+{
+  "src/main/java/Greeter.java": {
+    "modified": 1780577453,
+    "comments": {
+      "line: 69": "\t\t// EM: developer focussed documentation describing algorithm and control flow",
+      "line: 70": "\t\t// EM: about 10-25% of code base expected to be comments describing implementation"
+    },
+    "anchors": {
+      "main-entry-point": 67
+    },
+    "count_lines": 80,
+    "percent": 2.5
+  },
+  "src/test/java/GreeterTest.java": {
+    "modified": 1780589759,
+    "comments": [],
+    "anchors": {
+      "test-greeting-function": 34,
+      "test-help-menu": 53
+    },
+    "count_lines": 70,
+    "percent": 0
+  },
+  "src/test/java/InternationalGreeterTest.java": {
+    "modified": 1780564344,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 48,
+    "percent": 0
+  }
+}
+</file>
+
+<file path=".agents/em/jacoco.csv">
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+continuous-evolutionary-design-example,default,Greeter,20,47,0,2,6,7,1,4,1,3
+</file>
+
+<file path=".agents/em/links.tsv">
+source	line_no	type	target	anchor
+design/SCOPE.md	14	HAS_FEATURE	design/features/feat-001-prints-hello-world.md	NA
+design/SCOPE.md	18	HAS_FEATURE	design/features/feat-002-greets-user-by-name.md	NA
+design/SCOPE.md	22	HAS_FEATURE	design/features/feat-003-introduce-yourself.md	NA
+design/external-interfaces/interface-001-mvp-ui.md	41	HAS_FEATURE	design/features/feat-001-prints-hello-world.md	NA
+design/external-interfaces/interface-001-mvp-ui.md	42	HAS_FEATURE	design/features/feat-002-greets-user-by-name.md	NA
+design/external-interfaces/interface-001-mvp-ui.md	46	HAS_TEST	design/test-scripts/test-001-script-for-mvp.md	NA
+design/external-interfaces/interface-001-mvp-ui.md	44	IMPLEMENTED_BY	src/main/java/Greeter.java	NA
+design/features/feat-001-prints-hello-world.md	30	HAS_INTERFACE	design/external-interfaces/interface-001-mvp-ui.md	NA
+design/features/feat-001-prints-hello-world.md	29	HAS_PROTOTYPE	design/prototypes/prototype-001-mvp.Rmd	NA
+design/features/feat-001-prints-hello-world.md	25	HAS_TEST	design/test-scripts/test-001-script-for-mvp.md	NA
+design/features/feat-001-prints-hello-world.md	27	IMPLEMENTED_BY	src/main/java/Greeter.java	NA
+design/features/feat-002-greets-user-by-name.md	41	DEPENDS_ON	design/features/feat-001-prints-hello-world.md	NA
+design/features/feat-002-greets-user-by-name.md	31	HAS_INTERFACE	design/external-interfaces/interface-001-mvp-ui.md	NA
+design/features/feat-002-greets-user-by-name.md	29	HAS_PROTOTYPE	design/prototypes/prototype-001-mvp.Rmd	NA
+design/features/feat-002-greets-user-by-name.md	27	HAS_TEST	design/test-scripts/test-001-script-for-mvp.md	NA
+design/features/feat-002-greets-user-by-name.md	33	IMPLEMENTED_BY	src/main/java/Greeter.java	NA
+design/features/feat-003-introduce-yourself.md	24	HAS_PLAN	design/implementation/plans/plan-001-introduce-yourself.md	NA
+design/implementation/debt/debt-001-missing-abstraction.md	28	IMPACTS	src/main/java/Greeter.java	NA
+design/implementation/issues/issue-001-lack-of-internationalisation.md	32	TESTED_BY	src/test/java/InternationalGreeterTest.java	NA
+design/implementation/plans/plan-001-introduce-yourself.md	22	HAS_FEATURE	design/features/feat-003-introduce-yourself.md	NA
+design/implementation/plans/plan-001-introduce-yourself.md	25	IMPACTS	src/main/java/Greeter.java	NA
+design/prototypes/prototype-001-mvp.Rmd	81	CREATES_DATA	src/test/resources/test-data-001-mvp.csv	NA
+design/prototypes/prototype-001-mvp.Rmd	75	HAS_FEATURE	design/features/feat-001-prints-hello-world.md	NA
+design/prototypes/prototype-001-mvp.Rmd	76	HAS_FEATURE	design/features/feat-002-greets-user-by-name.md	NA
+design/prototypes/prototype-001-mvp.Rmd	78	HAS_TEST	design/test-scripts/test-001-script-for-mvp.md	NA
+design/test-scripts/test-001-script-for-mvp.md	52	HAS_FEATURE	design/features/feat-001-prints-hello-world.md	NA
+design/test-scripts/test-001-script-for-mvp.md	53	HAS_FEATURE	design/features/feat-002-greets-user-by-name.md	NA
+design/test-scripts/test-001-script-for-mvp.md	59	HAS_INTERFACE	design/external-interfaces/interface-001-mvp-ui.md	NA
+design/test-scripts/test-001-script-for-mvp.md	56	HAS_PROTOYPE	design/prototypes/prototype-001-mvp.Rmd	NA
+design/test-scripts/test-001-script-for-mvp.md	26	TESTED_BY	src/test/java/GreeterTest.java	test-greeting-function
+design/test-scripts/test-001-script-for-mvp.md	47	TESTED_BY	src/test/java/GreeterTest.java	test-help-menu
+design/test-scripts/test-001-script-for-mvp.md	31	USES_DATA	src/test/resources/test-data-001-mvp.csv	NA
+src/main/java/Greeter.java	24	IMPLEMENTS	design/external-interfaces/interface-001-mvp-ui.md	NA
+src/main/java/Greeter.java	22	IMPLEMENTS	design/features/feat-001-prints-hello-world.md	NA
+src/main/java/Greeter.java	23	IMPLEMENTS	design/features/feat-002-greets-user-by-name.md	NA
+src/test/java/GreeterTest.java	15	TESTS	design/test-scripts/test-001-script-for-mvp.md	NA
+src/test/java/GreeterTest.java	34	TESTS	design/test-scripts/test-001-script-for-mvp.md	NA
+src/test/java/GreeterTest.java	53	TESTS	design/test-scripts/test-001-script-for-mvp.md	NA
+src/test/java/InternationalGreeterTest.java	31	TESTS	design/implementation/issues/issue-001-lack-of-internationalisation.md	NA
+</file>
+
+<file path=".agents/em/run-output">
+Executing project with default configurations...
+[INFO] Processing build on daemon 3310f958
+[INFO] Scanning for projects...
+[INFO] BuildTimeEventSpy is registered.
+[INFO] 
+[INFO] Using the SmartBuilder implementation with a thread count of 15
+[INFO] 
+[INFO] --------------< io.github.ai4ci:continuous-evolutionary-design-example >---------------
+[INFO] Building continuous-evolutionary-design-example 0.3.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- jacoco:0.8.14:prepare-agent (default) @ continuous-evolutionary-design-example ---
+[INFO] argLine set to -javaagent:/home/vp22681/.m2/repository/org/jacoco/org.jacoco.agent/0.8.14/org.jacoco.agent-0.8.14-runtime.jar=destfile=/home/vp22681/Git/agent-skills/legacy-codebases/practice-continuous-evolutionary-design/examples/target/jacoco.exec
+[INFO] 
+[INFO] --- resources:3.4.0:resources (default-resources) @ continuous-evolutionary-design-example ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ continuous-evolutionary-design-example ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- exec:3.6.3:java (default-cli) @ continuous-evolutionary-design-example ---
+[INFO] [stdout] Hello world
+[INFO] [stdout] How are you, friend?
+</file>
+
+<file path=".agents/em/test-output">
+Building and running automated tests...
+[INFO] Processing build on daemon 5611254a
+[INFO] Scanning for projects...
+[INFO] BuildTimeEventSpy is registered.
+[INFO] 
+[INFO] Using the SmartBuilder implementation with a thread count of 15
+[INFO] 
+[INFO] --------------< io.github.ai4ci:continuous-evolutionary-design-example >---------------
+[INFO] Building continuous-evolutionary-design-example 0.3.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ continuous-evolutionary-design-example ---
+[INFO] Deleting /home/vp22681/Git/agent-skills/legacy-codebases/practice-continuous-evolutionary-design/examples/target
+[INFO] 
+[INFO] --- jacoco:0.8.14:prepare-agent (default) @ continuous-evolutionary-design-example ---
+[INFO] argLine set to -javaagent:/home/vp22681/.m2/repository/org/jacoco/org.jacoco.agent/0.8.14/org.jacoco.agent-0.8.14-runtime.jar=destfile=/home/vp22681/Git/agent-skills/legacy-codebases/practice-continuous-evolutionary-design/examples/target/jacoco.exec
+[INFO] 
+[INFO] --- resources:3.4.0:resources (default-resources) @ continuous-evolutionary-design-example ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ continuous-evolutionary-design-example ---
+[INFO] Recompiling the module because of changed source code.
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Compiling 1 source file with javac [debug target 1.8] to target/classes
+[WARNING] bootstrap class path is not set in conjunction with -source 8
+  not setting the bootstrap class path may lead to class files that cannot run on JDK 8
+    --release 8 is recommended instead of -source 8 -target 1.8 because it sets the bootstrap class path automatically
+[WARNING] source value 8 is obsolete and will be removed in a future release
+[WARNING] target value 8 is obsolete and will be removed in a future release
+[WARNING] To suppress warnings about obsolete options, use -Xlint:-options.
+[INFO] 
+[INFO] --- resources:3.4.0:testResources (default-testResources) @ continuous-evolutionary-design-example ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 1 resource from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ continuous-evolutionary-design-example ---
+[INFO] Recompiling the module because of changed dependency.
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Compiling 2 source files with javac [debug target 1.8] to target/test-classes
+[WARNING] bootstrap class path is not set in conjunction with -source 8
+  not setting the bootstrap class path may lead to class files that cannot run on JDK 8
+    --release 8 is recommended instead of -source 8 -target 1.8 because it sets the bootstrap class path automatically
+[WARNING] source value 8 is obsolete and will be removed in a future release
+[WARNING] target value 8 is obsolete and will be removed in a future release
+[WARNING] To suppress warnings about obsolete options, use -Xlint:-options.
+[INFO] 
+[INFO] --- surefire:3.5.2:test (default-test) @ continuous-evolutionary-design-example ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running InternationalGreeterTest
+[INFO] [stdout] Hello world
+[INFO] [stdout] How are you, Pierre?
+[INFO] [stdout] 
+[ERROR] Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.186 s <<< FAILURE! -- in InternationalGreeterTest
+[ERROR] InternationalGreeterTest.testLocale -- Time elapsed: 0.162 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:31)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:183)
+	at InternationalGreeterTest.testLocale(InternationalGreeterTest.java:38)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+[INFO] Running GreeterTest
+[INFO] [stdout] Usage: greet [-hV] [<name>]
+[INFO] [stdout] Greets a user
+[INFO] [stdout]       [<name>]    The name of the person to greet
+[INFO] [stdout]   -h, --help      Show this help message and exit.
+[INFO] [stdout]   -V, --version   Print version information and exit.
+[INFO] [stdout] 
+[INFO] [stdout] Hello world
+[INFO] [stdout] How are you, Fred?
+[INFO] [stdout] 
+[INFO] [stdout] Hello world
+[INFO] [stdout] How are you, Jack?
+[INFO] [stdout] 
+[INFO] [stdout] Hello world
+[INFO] [stdout] How are you, friend?
+[INFO] [stdout] 
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.126 s -- in GreeterTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Failures: 
+[ERROR]   InternationalGreeterTest.testLocale:38 expected: <true> but was: <false>
+[INFO] 
+[ERROR] Tests run: 5, Failures: 1, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  2.517 s (Wall Clock)
+[INFO] Finished at: 2026-06-04T10:10:20+01:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.2:test (default-test) on project continuous-evolutionary-design-example: There are test failures.
+[ERROR] 
+[ERROR] See /home/vp22681/Git/agent-skills/legacy-codebases/practice-continuous-evolutionary-design/examples/target/surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+</file>
+
+<file path="architecture/decision-records/adr-001-picocli.md">
+---
+status: final
+target-version: "0.3.0"
+---
+<!-- @required: status one of draft|final|deprecated -->
+<!-- @required: target-version specified -->
+
+# Use picocli for options parsing
+
+## Context
+
+The LOCAL CLI needs default options and positional parameters
+
+## Decision
+
+PicoCLI is the framework for this project
+
+## Rationale
+
+Its a CLI parsing tool
+
+## Consequences
+
+We may not have complete control over help message layout.
+</file>
+
+<file path="architecture/FRAMEWORK.md">
+* The project uses Java 8+, maven and Picocli
+* Testing with JUnit5, and logging with SLF4J and Log4j backend
+</file>
+
+<file path="architecture/STANDARDS.md">
+* Describe the coding conventions.
+* Some of this will be enforced by liniting.
+* Eclipse code style file in `code-style.xml`
+</file>
+
+<file path="design/external-interfaces/interface-001-mvp-ui.md">
+---
+status: final
+target-version: 0.3.0
+tags: mvp
+---
+<!-- @required: status one of draft|final|deprecated -->
+<!-- @required: target-version specified -->
+<!-- @optional: tags containing comma separated list of tags. -->
+
+Static prototype example
+
+## Interfaces:
+
+### 1) Help messages:
+
+**input:**
+
+```bash
+greet --help
+```
+
+**output:**
+
+```
+usage: greet [-v] [-h] [name ...]
+
+positional arguments:
+  name            The name of the person to greet
+
+options:
+  -h, --help      Show this help message and exit.
+  -V, --version   Print version information and exit.
+```
+
+### 2) Additional outputs ...
+
+etc...
+
+## Links:
+
+* [HAS_FEATURE](../features/feat-001-prints-hello-world.md)
+* [HAS_FEATURE](../features/feat-002-greets-user-by-name.md)
+<!-- @required: A link to the features implemented -->
+* [IMPLEMENTED_BY](/src/main/java/Greeter.java)
+<!-- @required: A link to the implementation -->
+* [HAS_TEST](/design/test-scripts/test-001-script-for-mvp.md)
+</file>
+
+<file path="design/features/feat-001-prints-hello-world.md">
+---
+status: final
+target-version: 0.0.1
+---
+<!-- @required: status one of draft|final|deprecated -->
+<!-- @required: target-version specified -->
+<!-- @optional: tags containing comma separated list of tags. -->
+
+<!--N.b.  good titles might be expressed in the form "{action} {result} {object}" -->
+
+## Description
+
+Print a hello world message. 
+
+<!-- N.b. This is too small to be a real feature but just as an example -->
+
+The first feature of this project enables us to have an example to test. The description would provide an example of how it was to be used and what benefits it creates. This could, for example, be specified as a set of user stories.
+
+## Success criteria
+
+How would you measure that this feature is working from a user perspective?
+
+## Links
+
+* [HAS_TEST](../test-scripts/test-001-script-for-mvp.md)
+<!-- @required when a feature has a final status it must link to one or more test-scripts -->
+* [IMPLEMENTED_BY](/src/main/java/Greeter.java)
+<!-- @required: A link to the implementation -->
+* [HAS_PROTOTYPE](/design/prototypes/prototype-001-mvp.Rmd)
+* [HAS_INTERFACE](/design/external-interfaces/interface-001-mvp-ui.md)
+</file>
+
+<file path="design/features/feat-002-greets-user-by-name.md">
+---
+status: final
+target-version: 0.3.0
+tags: mvp
+---
+<!-- @required: status one of draft|final|deprecated -->
+<!-- @required: target-version specified -->
+<!-- @optional: tags containing comma separated list of tags. -->
+<!-- N.b.  good titles might be expressed in the form "{action} {result} {object}" -->
+
+## Description
+
+Send a personalised greeting so the user knows we care.
+
+<!-- N.b. This is too small to be a real feature but just as an example -->
+
+The MVP feature of this project enables us to have an example to test. The description would provide an example of how it was to be used and what benefits it creates. This could, for example, be specified as a set of user stories.
+
+## Success Criteria
+
+Not so easy to describe in this trivial example.
+
+## Links
+
+
+<!-- @required: prerequisite or impacted features which are linked to from features must exist -->
+* [HAS_TEST](../test-scripts/test-001-script-for-mvp.md)
+<!-- @required: when a feature has a final status it must link to one or more test-scripts -->
+* [HAS_PROTOTYPE](../prototypes/prototype-001-mvp.Rmd)
+<!-- @optional: features link to one or more prototypes (which must exist) -->
+* [HAS_INTERFACE](../external-interfaces/interface-001-mvp-ui.md) - the MVP user interface
+<!-- @optional: features link to one or more external interfaces (which must exist)  -->
+* [IMPLEMENTED_BY](/src/main/java/Greeter.java)
+<!-- @required: A link to the implementation -->
+
+<!-- @optional: features link to replacements when superseded -->
+<!-- * [REPLACED_BY](./feat-005-new-user-greetings.md) -->
+<!-- N.B. link above doesn't exist -->
+
+<!-- @optional: any other snake case names are extracted but ignored -->
+* [DEPENDS_ON](./feat-001-prints-hello-world.md) - the hello world feature is needed before we can greet someone
+</file>
+
+<file path="design/features/feat-003-introduce-yourself.md">
+---
+status: draft
+target-version: 0.4.0
+tags: mvp
+---
+<!-- @required: status one of draft|final|deprecated -->
+<!-- @required: target-version specified -->
+
+## Description
+
+Introduce yourself to the user.
+
+Makes the user feel comfortable.
+For discussion: We need to consider a name for ourselves.
+This needs further elaboration before it can be implemented.
+
+## Success Criteria
+
+TBD.
+<!-- N.b. This feature is being worked up so its ok to be incomplete -->
+
+## Links
+
+* [HAS_PLAN](/design/implementation/plans/plan-001-introduce-yourself.md)
+<!-- @required: plans linked to from feature if they exist -->
+</file>
+
+<file path="design/implementation/debt/debt-001-missing-abstraction.md">
+---
+status: open
+since-version: 0.0.1
+target-version: 0.4.0
+---
+<!-- @required: status one of open|closed -->
+<!-- @required: target-version specified -->
+<!-- @optional: since-version specified -->
+<!-- @optional: tags containing comma separated list of tags. -->
+
+<!-- issues are a summary of functional issues which maybe will come from github -->
+
+## Issue description:
+
+Greeter class implementation concrete and not extensible.
+
+## Impact:
+
+Whatever the impact is
+
+## Resolution:
+
+- [ ] Step 1 ...
+- [ ] Step 2 ...
+
+## Links
+
+* [IMPACTS](/src/main/java/Greeter.java)
+<!-- @optional: affected implementation code -->
+</file>
+
+<file path="design/implementation/issues/issue-001-lack-of-internationalisation.md">
+---
+status: open
+since-version: 0.0.1
+target-version: 0.4.0
+---
+<!-- @required: status one of open|closed -->
+<!-- @required: target-version specified -->
+<!-- @optional: tags containing comma separated list of tags. -->
+
+<!-- issues are a summary of functional issues which maybe will come from github -->
+
+## Issue description:
+
+Greeter class does not allow for non-English speakers. It should detect platform
+language and respond in the correct language.
+
+## Steps to reproduce:
+
+1. Set locale to french
+2. Call greeter function
+
+## Expected behavour:
+
+Outputs "bonjour le monde"
+
+## Observed behaviour:
+
+Outputs "hello world"
+
+## Links
+
+* [TESTED_BY](/src/test/java/InternationalGreeterTest.java)
+<!-- @required: when an issue is raised a reproducing test should be present -->
+</file>
+
+<file path="design/implementation/plans/plan-001-introduce-yourself.md">
+---
+status: draft
+target-version: 0.4.0
+---
+<!-- @required: status one of draft|final|deprecated -->
+<!-- @required: target-version specified -->
+<!-- @optional: tags containing comma separated list of tags. -->
+
+<!-- acts as a description of what will be implemented to allow review and sign-off -->
+
+## Implementation steps:
+
+- [ ] Extend Greeter class execute method with a "Hello, I'm XXX message"
+- [ ] Other steps as required....
+
+## Success criteria:
+
+<!-- what is objectively and measurably better after implementation -->
+
+## Links
+
+* [HAS_FEATURE](/design/features/feat-003-introduce-yourself.md)
+<!-- @required: link to feature(s) this plan is implementing -->
+
+* [IMPACTS](/src/main/java/Greeter.java)
+<!-- @optional: affected implementation code -->
+</file>
+
+<file path="design/prototypes/prototype-001-mvp.Rmd">
+---
+title: "Hello world MVP prototype"
+output: rmarkdown::html_vignette
+status: final
+target-version: 0.3.0
+tags: mvp
+---
+<!-- @required: status one of draft|final|deprecated -->
+<!-- @required: target-version specified -->
+<!-- @optional: tags containing comma separated list of tags. -->
+
+The prototype is in this case an RMarkdown document format but anything could work.
+
+## Methods
+
+The greet function uses the mathematical model based on the work of Einstein et al.
+
+$$
+\frac{1}{x} = \sqrt(y)
+$$
+
+In the case of a complex mathematical model the prototype as a quarto or RMarkdown file becomes part
+of the documentation and write up, maybe as supplementary material to a journal article - could include visualisations.
+
+```{r setup}
+here::i_am("design/prototypes/prototype-001-mvp.Rmd")
+```
+
+## Prototype:
+
+Prototype description and execution instructions:
+
+* any required setup, tear down considerations.
+* edge cases expected failures
+
+```{r}
+# A prototype function:
+greet = function(name) {
+  if (is.na(name)) name = "friend"
+  return(paste0(c(
+    "Hello world",
+    sprintf("How are you, %s?",name)
+  ),collapse="\n"))
+}
+```
+
+## User testing:
+
+Testing the prototype, might involve a html widget user interface, or a set of test cases:
+
+```{r}
+greet("Fred")
+greet("Jack")
+# Prototype inputs and results can be run by the developer and .
+```
+
+Visualisations of the prototype methods may be part of the documentation.
+
+## Test data:
+
+Generating test data from the prototype and writing it into the production code test cases:
+
+```{r}
+
+names = c("Fred", "Jack", NA)
+results = lapply(names, greet)
+test_data = tibble::tibble(name = names, result = unlist(results))
+
+readr::write_csv(test_data, here::here("src/test/resources/test-data-001-mvp.csv"))
+
+```
+
+## Links
+
+* [HAS_FEATURE](/design/features/feat-001-prints-hello-world.md) - the hello world
+* [HAS_FEATURE](/design/features/feat-002-greets-user-by-name.md) - greet by name
+<!-- @required: A link to the features implemented -->
+* [HAS_TEST](/design/test-scripts/test-001-script-for-mvp.md)
+
+
+* [CREATES_DATA](/src/test/resources/test-data-001-mvp.csv)
+<!-- @optional: A path to test data this prototype generates -->
+<!-- if the prototype writes test data this should be present and the target exists -->
+</file>
+
+<file path="design/test-scripts/test-001-script-for-mvp.md">
+---
+status: final
+target-version: 0.3.0
+tags: mvp
+---
+<!-- @required: status one of draft|final|deprecated -->
+<!-- @required: target-version specified -->
+<!-- @optional: tags containing comma separated list of tags. -->
+
+
+## Scripts
+
+<!-- a set of test scripts relating to these features -->
+<!-- data might be simply hard coded into the test case implementation -->
+<!-- may be inline test data here or maybe as here a reference to CSV -->
+
+### 1) Test the greeting works
+
+ 1. Setup: The application is started with a name passed as a positional parameter.
+ 2. Execution: The user's {name} is read from the parameters. 
+ 3. Expectation: 
+	 * The system prints the message "Hello world" to the console. 
+	 * The system prints the message "How are you, {name}?" 
+ 4. Cleanup: The application is finished.
+
+[TESTED_BY](/src/test/java/GreeterTest.java#test-greeting-function)
+<!-- @optional: Paths to the test implementation -->
+
+**Test data:**
+
+[USES_DATA](/src/test/resources/test-data-001-mvp.csv)
+<!-- example of test data as a reference to CSV generated by the prototype -->
+
+### 2) Test the help file works
+
+ 1. Setup: The application is started with the `--help` option.
+ 3. Expectation: 
+	 * The system prints the help file contents containing specific phrases
+ 4. Cleanup: The application is finished.
+
+**Test data:**
+
+* contains: `the name of the person to greet`
+* contains: `show the version number and exit`
+<!-- example of fixed test data -->
+
+[TESTED_BY](/src/test/java/GreeterTest.java#test-help-menu)
+<!-- @optional: Paths to the test implementation -->
+
+## Links
+
+* [HAS_FEATURE](/design/features/feat-001-prints-hello-world.md) - prints hello world
+* [HAS_FEATURE](/design/features/feat-002-greets-user-by-name.md) - greets user by name
+<!-- @required: links to the features under test -->
+
+* [HAS_PROTOYPE](/design/prototypes/prototype-001-mvp.Rmd) - the MVP prototype
+<!-- @optional: Paths to the prototypes used in this test script -->
+
+* [HAS_INTERFACE](/design/external-interfaces/interface-001-mvp-ui.md) - MVP user interface
+<!-- @optional: Paths to the interfaces tested by this test script -->
+</file>
+
+<file path="design/SCOPE.md">
+# The greeter project
+
+This example project is a test of the design documentation structure. This is the design of an example hello world application.
+<!-- @required: An example description of the overall project -->
+
+<!-- Headings describing versions in which features were implemented with links to feature descriptions -->
+<!-- feature names are descriptive. Its not required to follow this pattern -->
+
+<!-- @required: everything described in the `./features` directory is linked to here: -->
+<!-- @required: target of links to features must exist: -->
+
+## v0.0.1 - initial project setup
+
+* [HAS_FEATURE](/design/features/feat-001-prints-hello-world.md) - prints hello world
+
+## v0.3.0 - minimal viable product
+
+* [HAS_FEATURE](/design/features/feat-002-greets-user-by-name.md) - greets user by name
+
+## Roadmap
+
+* [HAS_FEATURE](/design/features/feat-003-introduce-yourself.md) - introduces myself
+* under consideration - let the user configure my name
+</file>
+
+<file path="src/main/java/Greeter.java">
+import java.util.concurrent.Callable;
+
+import org.apache.log4j.BasicConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Parameters;
+
+/** The greet command. */
+@Command(
+		name = "greet",
+		mixinStandardHelpOptions = true,
+		description = "Greets a user",
+		version = { "0.3.0" }
+)
+public class Greeter implements Callable<Integer> {
+
+	static Logger log = LoggerFactory.getLogger(Greeter.class);
+	// Links:
+	// [IMPLEMENTS](/design/features/feat-001-prints-hello-world.md)
+	// [IMPLEMENTS](/design/features/feat-002-greets-user-by-name.md)
+	// [IMPLEMENTS](/design/external-interfaces/interface-001-mvp-ui.md)
+	// {@required: features / interfaces / prototypes referenced
+	// from implementing code as path relative to project root}
+
+	@Parameters(
+			index = "0",
+			description = "The name of the person to greet",
+			arity = "0..1"
+	)
+	private String name;
+
+	private Greeter() {}
+
+	/**
+	 * Execute the hello world function
+	 * 
+	 * @param args command line arguments - see --help
+	 */
+	public static void main(String[] args) {
+		BasicConfigurator.configure();
+		log.trace("Excuting main function");
+		int exitCode = run(args);
+		log.trace("Exiting greeter with status: " + exitCode);
+		System.exit(exitCode);
+	}
+
+	/**
+	 * For testing
+	 * 
+	 * @param args command line arguments - see --help
+	 * @return a status code (0 = success)
+	 */
+	protected static int run(String[] args) {
+		return new CommandLine(new Greeter()).execute(args);
+	}
+
+	/**
+	 * main execution engine of the greeter function.
+	 *
+	 * @return a status code (0 = success)
+	 */
+	@Override
+	public Integer call() throws Exception {
+		// ### main-entry-point
+		// {@optional anchor points for links}
+		// EM: developer focussed documentation describing algorithm and control flow
+		// EM: about 10-25% of code base expected to be comments describing implementation
+		// {@required: ai added comments must be prefixed with EM: to confirm their provenance}
+		// {and grepping a code base for //EM: will return useful developer comments}
+		// {EM:TODO and EM:FIXME comments are supported}
+		if (this.name == null) { this.name = "friend"; }
+		log.trace("Greet.call with " + this.name);
+		System.out.println("Hello world");
+		System.out.println(String.format("How are you, %s?", this.name));
+		return 0;
+	}
+}
+</file>
+
+<file path="src/test/java/GreeterTest.java">
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
+
+class GreeterTest {
+
+	// [TESTS](/design/test-scripts/test-001-script-for-mvp.md)
+	// {@optional: test-scripts referenced from test code}
+
+	private final PrintStream standardOut = System.out;
+	private ByteArrayOutputStream outputStreamCaptor;
+
+	@BeforeEach
+	public void setUp() {
+		this.outputStreamCaptor = new ByteArrayOutputStream();
+		System.setOut(new PrintStream(this.outputStreamCaptor));
+	}
+
+	@CsvFileSource(
+			resources = "/test-data-001-mvp.csv",
+			numLinesToSkip = 1,
+			nullValues = "NA"
+	) @ParameterizedTest
+	void testGreeting(String name, String result) {
+
+		// ### test-greeting-function [TESTS](/design/test-scripts/test-001-script-for-mvp.md)
+		// {@optional a defined anchor point}
+
+		String[] args = name == null ? new String[0] : new String[] { name };
+		int exitCode = Greeter.run(args);
+
+		assertTrue(exitCode == 0);
+		assertEquals(
+			result,
+			this.outputStreamCaptor.toString()
+				.trim()
+		);
+	}
+
+	@Test
+	void testHelp() {
+
+		// {@optional: test-scripts referenced from implementing code as path relative to project root}
+		// {@optional a defined anchor point}
+		// ### test-help-menu [TESTS](/design/test-scripts/test-001-script-for-mvp.md)
+
+		int exitCode = Greeter.run(new String[] { "--help" });
+		String message = this.outputStreamCaptor.toString()
+			.toLowerCase()
+			.trim();
+		assertTrue(exitCode == 0);
+		assertTrue(message.contains("the name of the person to greet"));
+		assertTrue(message.contains("print version information and exit"));
+	}
+
+	@AfterEach
+	public void tearDown() {
+		String message = this.outputStreamCaptor.toString();
+		System.setOut(this.standardOut);
+		System.out.println(message);
+	}
+}
+</file>
+
+<file path="src/test/java/InternationalGreeterTest.java">
+// ---
+// status: draft
+// target-version: 0.3.0
+// tags: mvp
+// ---
+// {@optional: yaml headers in source code are also processed}
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.Locale;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+class InternationalGreeterTest {
+
+	private final PrintStream standardOut = System.out;
+	private ByteArrayOutputStream outputStreamCaptor;
+
+	@BeforeEach
+	public void setUp() {
+		this.outputStreamCaptor = new ByteArrayOutputStream();
+		System.setOut(new PrintStream(this.outputStreamCaptor));
+	}
+
+	@Test
+	void testLocale() {
+		// {@optional: issues referenced from implementing code}
+		// [TESTS](/design/implementation/issues/issue-001-lack-of-internationalisation.md)
+		Locale.setDefault(Locale.FRENCH);
+		int exitCode = Greeter.run(new String[] { "Pierre" });
+		String message = this.outputStreamCaptor.toString()
+			.toLowerCase()
+			.trim();
+		assertTrue(exitCode == 0);
+		assertTrue(message.contains("bonjour le monde"));
+		assertTrue(message.contains("ca va, pierre?"));
+	}
+
+	@AfterEach
+	public void tearDown() {
+		String message = this.outputStreamCaptor.toString();
+		System.setOut(this.standardOut);
+		System.out.println(message);
+	}
+}
+</file>
+
+<file path="src/test/resources/test-data-001-mvp.csv">
+name,result
+Fred,"Hello world
+How are you, Fred?"
+Jack,"Hello world
+How are you, Jack?"
+NA,"Hello world
+How are you, friend?"
+</file>
+
+<file path=".gitignore">
+# Language specific
+/target/
+/.settings/
+.classpath
+.project
+
+# For this example project we are excluding these from the repository
+# This is probably not something you would exclude in a real project
+graphify-out/
+repomix-.config.json
+
+# In general you would also want these
+graphify-out/cost.json
+graphify-out/cache/
+</file>
+
+<file path="em">
+#!/bin/bash
+
+# An example `em` script for this continuous evolutionary design method example project
+#
+
+# Exit immediately if a command exits with a non-zero status
+set -e
+
+export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:/bin/java::")
+
+# --- Configuration & Paths ---
+EM_DIR=".agents/em"
+RUN_LOG="$EM_DIR/run-output"
+TEST_LOG="$EM_DIR/test-output"
+DOC_LOG="$EM_DIR/docs-output"
+CHECK_LOG="$EM_DIR/check-output"
+DESIGN_LOG="$EM_DIR/design-output"
+
+# --- Helper Functions ---
+ensure_em_dir() {
+    mkdir -p "$EM_DIR"
+}
+
+show_help() {
+    echo "Usage: em <command> [options]"
+    echo ""
+    echo "Supported sub-commands:"
+    echo "  setup   Installs prerequisites, checks runtime versions, and resolves dependencies"
+    echo "  run     Builds and executes the project (logs to $RUN_LOG)"
+    echo "  test    Builds and runs all automated tests (outputs to terminal and $TEST_LOG)"
+    echo "  doc     Runs documentation tools (logs warnings/errors to $DOC_LOG)"
+    echo "  check   Runs linters and code quality checks (logs report to $CHECK_LOG)"
+    echo "  design  Runs design consistency checks (logs report to $DESIGN_LOG)"
+    echo "  help    Show this help message"
+}
+
+# --- Sub-command Implementations ---
+
+cmd_setup() {
+    echo "Starting 'setup' command..."
+    
+    local missing_java=0
+    local missing_maven=0
+    
+    # Check for Java JDK
+    if ! command -v java &> /dev/null; then
+        missing_java=1
+    fi
+    
+    # Check for Maven / mvnd
+    if ! command -v mvnd &> /dev/null && ! command -v mvn &> /dev/null; then
+        missing_maven=1
+    fi
+    
+    # 1) Check if dependencies missing, exit if nothing missing
+    if [ $missing_java -eq 0 ] && [ $missing_maven -eq 0 ]; then
+        echo "All system dependencies (Java and Maven) are already installed."
+        echo "Setup complete."
+        return 0
+    fi
+    
+    # 2) Check if running as root and error asking user to run `sudo em setup`
+    if [ "$(id -u)" -ne 0 ]; then
+        echo "ERROR: System dependencies are missing and root privileges are required to install them."
+        echo "Please run this command with sudo:"
+        echo "  sudo ./em setup"
+        exit 1
+    fi
+    
+    # 3) Install missing dependencies (running as root)
+    echo "Installing missing dependencies as root..."
+    
+    if [ $missing_java -eq 1 ]; then
+        echo "Installing default-jdk..."
+        apt-get update && apt-get install -y default-jdk
+    fi
+    
+    if [ $missing_maven -eq 1 ]; then
+        echo "Installing maven..."
+        apt-get update && apt-get install -y maven
+    fi
+    
+    echo "Setup complete."
+}
+
+cmd_run() {
+    echo "Starting 'run' command..."
+    ensure_em_dir
+
+    echo "Executing project with default configurations..." > "$RUN_LOG"
+
+    # Example your project's build and execute logic here
+    # This really needs to expose trace logging to the console with a log4j properties file. 
+    mvnd compile exec:java -Dexec.mainClass="Greeter" -Dexec.args="$@" | grep -v "Download" | tee -a "$RUN_LOG"
+    
+    echo "Run complete. Output logged to $RUN_LOG"
+}
+
+cmd_test() {
+    echo "Starting 'test' command..."
+    ensure_em_dir
+
+    echo "Building and running automated tests..." > "$TEST_LOG"
+    
+    # Example project's test suite command here
+    # includes code coverage report
+    mvnd clean test jacoco:report | grep -v "Download" | tee -a "$TEST_LOG"
+    
+    echo "Test suite complete. Output saved to $TEST_LOG"
+}
+
+cmd_doc() {
+    echo "Starting 'doc' command..."
+    ensure_em_dir
+
+    echo "Running documentation tools..." > "$DOC_LOG"
+    
+    # TODO: Add your project's documentation tool here
+    # Redirect stderr (warnings/errors) to the doc log, stdout to /dev/null or terminal
+    mvnd javadoc:javadoc | grep -v "Download" | tee -a "$DOC_LOG"
+
+    echo "Documentation generation complete. Warnings/errors logged to $DOC_LOG"
+}
+
+cmd_check() {
+    echo "Starting 'check' command..."
+    ensure_em_dir
+
+    echo "Running linters and code quality checks..." > "$CHECK_LOG"
+    
+    mvnd spotless:check checkstyle:check spotbugs:check pmd:cpd-check dependency:analyze | grep -v "Download" | tee -a "$CHECK_LOG"
+
+    echo "Code quality check complete. Report written to $CHECK_LOG"
+}
+
+cmd_design() {
+    echo "Starting 'design' command..."
+    ensure_em_dir
+
+    echo "Running design consistency checks..." > "$DESIGN_LOG"
+
+    # This path is true for this specific project but will need to be configured correctly per
+    # project. If the project is using a standards conformant agent harness and the skills are installed
+    # on a per project basis then this should work.
+    .agents/skills/practice-continuous-evolutionary-design/scripts/design-check.R --dir=. "$@" | tee -a "$DESIGN_LOG"
+
+}
+
+cmd_bump() {
+    echo "Bumping patch version numbers..."
+    mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion} versions:commit
+
+}
+
+# --- Main Argument Parsing ---
+
+# If no arguments are passed, default to help
+if [ $# -eq 0 ]; then
+    show_help
+    exit 0
+fi
+
+# Parse the first argument as the sub-command
+COMMAND="$1"
+shift # Remove the command from the argument list, leaving sub-arguments in "$@"
+
+case "$COMMAND" in
+    setup)
+        cmd_setup "$@"
+        ;;
+    run)
+        cmd_run "$@"
+        ;;
+    test)
+        cmd_test "$@"
+        ;;
+    doc)
+        cmd_doc "$@"
+        ;;
+    check)
+        cmd_check "$@"
+        ;;
+    design)
+        cmd_design "$@"
+        ;;
+    bump)
+        cmd_bump "$@"
+        ;;
+    --help|help|-h)
+        show_help
+        ;;
+    *)
+        echo "Error: Unknown command '$COMMAND'" >&2
+        echo "" >&2
+        show_help >&2
+        exit 1
+        ;;
+esac
+</file>
+
+<file path="pom.xml">
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>io.github.ai4ci</groupId>
+	<artifactId>continuous-evolutionary-design-example</artifactId>
+	<version>0.3.0</version>
+	<properties>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>info.picocli</groupId>
+			<artifactId>picocli</artifactId>
+			<version>4.7.7</version>
+		</dependency>
+		<!-- Source: https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>2.0.18</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-reload4j</artifactId>
+			<version>2.0.18</version>
+		</dependency>
+		<!-- TEST DEPENDENCIES -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>5.11.4</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Source: https://mvnrepository.com/artifact/org.slf4j/slf4j-reload4j -->
+	</dependencies>
+	<build>
+		<plugins>
+			<!-- Explicitly forcing a modern test runner version -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.5.2</version>
+			</plugin>
+			<plugin>
+				<groupId>com.diffplug.spotless</groupId>
+				<artifactId>spotless-maven-plugin</artifactId>
+				<version>2.43.0</version>
+				<configuration>
+					<java>
+						<eclipse>
+							<file>${project.basedir}/code-style.xml</file>
+						</eclipse>
+					</java>
+				</configuration>
+			</plugin>
+			<!-- Checkstyle Validation Plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>3.3.1</version>
+				<configuration>
+					<configLocation>checkstyle.xml</configLocation>
+					<consoleOutput>true</consoleOutput>
+					<failsOnError>true</failsOnError>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.github.spotbugs</groupId>
+				<artifactId>spotbugs-maven-plugin</artifactId>
+				<version>4.9.8.0</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.23.0</version>
+				<configuration>
+					<printFailingErrors>true</printFailingErrors>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.14</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<formats>CSV</formats>
+							<outputDirectory>${project.basedir}/.agents/em</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- This example does not include PMC code duplication or jacoco
+			code coverage -->
+			<!-- In a real project it should do -->
+		</plugins>
+	</build>
+</project>
+</file>
+
+<file path="README.md">
+This examples directory has a basic continuous evolutionary design project implemented using Java and maven.
+
+N.B. The relative references in this project are all from the `examples` directory in which this file resides.
+
+This example project contains the following files which are commented design artifacts are commented and can be used as templates for new artifacts:
+
+./em
+./design/external-interfaces/interface-001-mvp-ui.md
+./design/prototypes/prototype-001-mvp.Rmd
+./design/implementation/plans/plan-001-introduce-yourself.md
+./design/implementation/issues/issue-001-lack-of-internationalisation.md
+./design/implementation/debt/debt-001-missing-abstraction.md
+./design/SCOPE.md
+./design/features/feat-003-introduce-yourself.md
+./design/features/feat-002-greets-user-by-name.md
+./design/features/feat-001-prints-hello-world.md
+./design/test-scripts/test-001-script-for-mvp.md
+./skills
+./README.md
+./architecture/decision-records/adr-001-picocli.md
+./architecture/STANDARDS.md
+./architecture/FRAMEWORK.md
+
+It also contains the following files which are exmaples of the outputs of running the `em` script for this specific project
+
+./.agents/em/design-output
+./.agents/em/links.tsv
+./.agents/em/check-output
+./.agents/em/log
+./.agents/em/jacoco.csv
+./.agents/em/files.tsv
+./.agents/em/jacoco.xml
+./.agents/em/test-output
+./.agents/em/implementation-notes.json
+
+The whole project is in one repomix summary at
+
+./repomix-output.xml
+</file>
+
+</files>

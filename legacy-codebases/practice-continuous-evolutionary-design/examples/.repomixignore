@@ -1,0 +1,10 @@
+# Add patterns to ignore here, one per line
+
+checkstyle.xml
+code-style.xml
+
+repomix.config.json
+.repomixignore
+.graphifyignore
+graphify-out/
+

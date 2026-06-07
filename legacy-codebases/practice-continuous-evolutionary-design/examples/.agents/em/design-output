@@ -1,0 +1,15 @@
+Running design consistency checks...
+Usage: .agents/skills/practice-continuous-evolutionary-design/scripts/design-check.R [options]
+Check continuous evolutionary design documents for consistency
+
+Options:
+	-d DIRECTORY, --dir=DIRECTORY
+		the root directory of the project
+
+	-x, --no-save
+		omit saving the changes to the history
+
+	-h, --help
+		Show this help message and exit
+
+
