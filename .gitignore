@@ -4,3 +4,4 @@
 .pi/agent/auth.json
 **/node_modules
 **/bun.lock
+**/\.Rhistory

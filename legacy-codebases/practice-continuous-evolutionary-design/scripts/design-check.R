@@ -51,6 +51,8 @@ opt = optparse::parse_args(opt_parser)
 
 # 2. Find em directory & project root ----
 
+# opt = list(); opt$dir = "~/Git/scoder"
+
 tmp = .directories(opt$dir)
 dir = tmp$dir
 git_dir = tmp$git_dir
@@ -90,54 +92,61 @@ removed_files = previous_files %>% dplyr::anti_join(current_files, by = c("path"
 # md_file = "design/features/feat-001-prints-hello-world.md"
 # md_file = "src/test/java/InternationalGreeterTest.java"
 .extract_md_metadata = function(md_file) {
-  metadata = dplyr::tibble(
+  metadata = empty = dplyr::tibble(
     status = NA_character_,
     target_version = NA_character_,
     tags = NA_character_
   )
 
-  lines = readr::read_lines(fs::path(dir, md_file))
+  tryCatch(
+    {
+      lines = readr::read_lines(fs::path(dir, md_file))
 
-  if (!fs::path_ext(md_file) %in% c("md", "Rmd", "qmd")) {
-    if (grepl("^(.*?)---+$", lines[1])) {
-      # First line matches a prefixed yaml line.
-      head = gsub("^(.*?)---+$", "\\1", lines[1])
-      # Strip the prefix from all lines
-      lines = substr(lines, nchar(head) + 1, nchar(lines))
-    } else {
-      return(metadata)
-    }
-  }
-
-
-  if (grepl("^---+$", lines[1])) {
-    matches = which(lines == lines[1])
-    if (length(matches) >= 2) {
-      close = matches[2]
-      if (close > 2) {
-        yaml = lines[2:(close - 1)]
-        parsed = yaml::yaml.load(yaml)
-        metadata = dplyr::as_tibble(parsed)
-        if ("target-version" %in% colnames(metadata)) {
-          metadata = metadata %>% dplyr::rename(target_version = `target-version`)
+      if (!fs::path_ext(md_file) %in% c("md", "Rmd", "qmd")) {
+        if (grepl("^(.*?)---+$", lines[1])) {
+          # First line matches a prefixed yaml line.
+          head = gsub("^(.*?)---+$", "\\1", lines[1])
+          # Strip the prefix from all lines
+          lines = substr(lines, nchar(head) + 1, nchar(lines))
+        } else {
+          return(empty)
         }
-        if ("since-version" %in% colnames(metadata)) {
-          metadata = metadata %>% dplyr::rename(since_version = `since-version`)
-        }
-      } else {
-        message("Empty yaml block: ", md_file)
       }
-    } else {
-      message("Unclosed yaml block: ", md_file)
+
+
+      if (grepl("^---+$", lines[1])) {
+        matches = which(lines == lines[1])
+        if (length(matches) >= 2) {
+          close = matches[2]
+          if (close > 2) {
+            yaml = lines[2:(close - 1)]
+            parsed = yaml::yaml.load(yaml)
+            metadata = dplyr::as_tibble(parsed)
+            if ("target-version" %in% colnames(metadata)) {
+              metadata = metadata %>% dplyr::rename(target_version = `target-version`)
+            }
+            if ("since-version" %in% colnames(metadata)) {
+              metadata = metadata %>% dplyr::rename(since_version = `since-version`)
+            }
+          } else {
+            message("Empty yaml block: ", md_file)
+          }
+        } else {
+          message("Unclosed yaml block: ", md_file)
+        }
+      }
+      # May be no yaml header which is basically normal.
+      return(metadata)
+    },
+    error = function(e) {
+      return(empty)
     }
-  }
-  # May be no yaml header which is basically normal.
-  return(metadata)
+  )
 }
 
 updated_files = updated_files %>%
   dplyr::mutate(
-    metadata = purrr::map(path, .extract_md_metadata)
+    metadata = suppressWarnings(purrr::map(path, .extract_md_metadata))
   ) %>%
   tidyr::unnest(metadata)
 
@@ -171,47 +180,58 @@ current_links = readr::read_tsv(links_file, col_types = "ciccc")
 # .extract_links(file = "src/main/java/Greeter.java")
 # .extract_links(file = "architecture/FRAMEWORK.md")
 .extract_links = function(file) {
-  lines = readr::read_lines(fs::path(dir, file))
-  lines = gsub("<!--.*?-->", "", lines)
-  links = grepv("\\[[A-Z_]+\\]\\([^\\)]+\\)", lines, perl = TRUE)
+  empty = dplyr::tibble(
+    source = character(),
+    line_no = integer(),
+    type = character(),
+    target = character(),
+    anchor = character()
+  )
 
-  if (length(links) > 0) {
-    line_nos = which(grepl("\\[[A-Z_]+\\]\\([^\\)]+\\)", lines, perl = TRUE))
-    types = gsub("^.*?\\[([A-Z_]+)\\]\\([^\\)]+\\).*$", "\\1", links, perl = TRUE)
-    targets = gsub("^.*?\\[[A-Z_]+\\]\\(([^\\)]+)\\).*$", "\\1", links)
-    # targets = c("/abc/def/ghi.md#anchor","/abc/def/ghi.md")
-    anchors = sapply(strsplit(targets, "#", fixed = TRUE), function(x) if (length(x) > 1) x[2] else NA)
-    targets = sapply(strsplit(targets, "#", fixed = TRUE), `[`, 1)
-    targets = fs::path_rel(
-      ifelse(
-        startsWith(targets, "/"),
-        fs::path(dir, targets),
-        fs::path_norm(fs::path(dir, fs::path_dir(file), targets))
-      ),
-      dir
-    )
-    return(dplyr::tibble(
-      source = file,
-      line_no = line_nos,
-      type = types,
-      target = targets,
-      anchor = anchors
-    ))
-  } else {
-    return(dplyr::tibble(
-      source = character(),
-      line_no = integer(),
-      type = character(),
-      target = character(),
-      anchor = character()
-    ))
-  }
+  tryCatch(
+    {
+      lines = readr::read_lines(fs::path(dir, file))
+
+      lines = readr::read_lines(fs::path(dir, file))
+      lines = gsub("<!--.*?-->", "", lines)
+      links = grepv("\\[[A-Z_]+\\]\\([^\\)]+\\)", lines, perl = TRUE)
+
+      if (length(links) > 0) {
+        line_nos = which(grepl("\\[[A-Z_]+\\]\\([^\\)]+\\)", lines, perl = TRUE))
+        types = gsub("^.*?\\[([A-Z_]+)\\]\\([^\\)]+\\).*$", "\\1", links, perl = TRUE)
+        targets = gsub("^.*?\\[[A-Z_]+\\]\\(([^\\)]+)\\).*$", "\\1", links)
+        # targets = c("/abc/def/ghi.md#anchor","/abc/def/ghi.md")
+        anchors = sapply(strsplit(targets, "#", fixed = TRUE), function(x) if (length(x) > 1) x[2] else NA)
+        targets = sapply(strsplit(targets, "#", fixed = TRUE), `[`, 1)
+        targets = fs::path_rel(
+          ifelse(
+            startsWith(targets, "/"),
+            fs::path(dir, targets),
+            fs::path_norm(fs::path(dir, fs::path_dir(file), targets))
+          ),
+          dir
+        )
+        return(dplyr::tibble(
+          source = file,
+          line_no = line_nos,
+          type = types,
+          target = targets,
+          anchor = anchors
+        ))
+      } else {
+        return(empty)
+      }
+    },
+    error = function(e) {
+      return(empty)
+    }
+  )
 }
 
-new_links = dplyr::bind_rows(lapply(
+new_links = suppressWarnings(dplyr::bind_rows(lapply(
   updated_files$path,
   .extract_links
-))
+)))
 
 # Select out the links that are supported in EM designs:
 # All upper snake case are extracted:
@@ -289,16 +309,19 @@ if (fs::file_exists(implementation_notes_file)) {
 
 new_implementation_notes = implementation %>%
   dplyr::mutate(
-    lines = purrr::map(path, ~ readr::read_lines(fs::path(dir, .x))),
+    lines = purrr::map(path, ~ tryCatch(
+      suppressWarnings(readr::read_lines(fs::path(dir, .x))),
+      error = function(e) character()
+    )),
     comments = purrr::map(lines, ~ {
-      line_no = which(grepl("^\\s*(?:\\/\\/|#['#]?|--|/\\*|%|<!--)\\s*EM:", .x))
+      line_no = which(suppressWarnings(grepl("^\\s*(?:\\/\\/|#['#]?|--|/\\*|%|<!--)\\s*EM:", .x)))
       comment = as.list(.x[line_no])
       names(comment) = sprintf("line: %d", line_no)
       comment
     }),
     # anchors = purrr::map(lines, .find_definitions),
     anchors = purrr::map(lines, ~ {
-      line_no = which(grepl("^\\s*(?:\\/\\/|#['#]?|--|/\\*|%|<!--)\\s*###\\s*", .x))
+      line_no = which(suppressWarnings(grepl("^\\s*(?:\\/\\/|#['#]?|--|/\\*|%|<!--)\\s*###\\s*", .x)))
       anchor = .x[line_no]
       anchor = gsub(
         "^\\s*(?:\\/\\/|#['#]?|--|/\\*|%|<!--)\\s*###\\s*",
