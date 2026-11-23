@@ -1,5 +1,5 @@
 ---
-name: manage-current-project-issues
+name: manage-github-issues
 description: >
   Manage issues, pull requests, and discussions in your own GitHub project.
   Use when triaging, creating, editing, or closing issues; reviewing and
@@ -16,7 +16,7 @@ metadata:
   source_url: https://cli.github.com/manual/
 ---
 
-# Manage Current Project Issues — Agent Skill
+# Manage Current Project Github Issues — Agent Skill
 
 Full documentation: https://cli.github.com/manual/
 
